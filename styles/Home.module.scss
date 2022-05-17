@@ -1,0 +1,87 @@
+
+.main {
+  overflow-y: auto;
+  background-color: #000000;
+}
+
+.subSlogan {
+  width: 871px;
+  height: 175px;
+  font-size: 35px;
+  font-family: YouSheBiaoTiHei-Bold, YouSheBiaoTiHei;
+  font-weight: bold;
+  color: #EAEAEA;
+  line-height: 49px;
+}
+
+.goItems {
+  font-size: 28px;
+  font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+  font-weight: 400;
+  color: #FFFFFF;
+  margin-bottom: 55px;
+}
+
+.divider {
+  width: 100%;
+  height: 46px;
+  font-size: 35px;
+  font-family: YouSheBiaoTiHei-Bold, YouSheBiaoTiHei;
+  font-weight: bold;
+  color: #EAEAEA;
+  line-height: 49px;
+  background: linear-gradient(to right, #A183EE, pink, #A183EE, pink, #A183EE, pink);
+  word-wrap: normal;
+  white-space: nowrap;
+}
+
+.slogan {
+  padding: 50px 0px;
+  width: 561px;
+  font-size: 80px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 112px;
+}
+
+.wishImg {
+  width: 300px;
+  height: 300px;
+  -ms-transform:rotate(20deg); /* IE 9 */
+  -webkit-transform:rotate(20deg); /* Safari and Chrome */
+  transform:rotate(20deg);
+}
+
+.rankTableTitle {
+  margin-top:55px;
+  margin-bottom:15px;
+  text-align: center;
+  width: 100%;
+  height: 58px;
+  font-size: 40px;
+  font-family: Source Han Sans CN-Heavy, Source Han Sans CN;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 56px;
+}
+
+.rankTable {
+  width: 100%;
+  background-color: black;
+}
+
+.rankTableHead {
+  background-color: black !important;
+}
+
+.headCell {
+
+  > span {
+    text-align: center;
+    font-size: 20px;
+    font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+    font-weight: 400;
+    color: #F1F1F1;
+    line-height: 28px;
+  }
+}
