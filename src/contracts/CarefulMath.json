@@ -1,0 +1,2374 @@
+{
+  "contractName": "CarefulMath",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"author\":\"Compound\",\"kind\":\"dev\",\"methods\":{},\"title\":\"Careful Math\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"Derived from OpenZeppelin's SafeMath library         https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/CarefulMath.sol\":\"CarefulMath\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/CarefulMath.sol\":{\"keccak256\":\"0x21f520e3156c60cda7d4e9dbc0627578845ab93d66aa2e40d32325645a925af0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d0d59bc62ac081faebf3e218114bf9bc0858780691538fc4e706a9f326630c81\",\"dweb:/ipfs/QmaBsx5QkwHzqeLXQBwthD18GTfz6CjwxbvshRkjS8Nd6P\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212200425b83b9f79c1988f4d227fd7f0b12652b31d76ba68ec5f7224fd62c035d8fa64736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212200425b83b9f79c1988f4d227fd7f0b12652b31d76ba68ec5f7224fd62c035d8fa64736f6c634300080d0033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "283:1949:6:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "283:1949:6:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.22 <0.9.0;\n\n/**\n  * @title Careful Math\n  * @author Compound\n  * @notice Derived from OpenZeppelin's SafeMath library\n  *         https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol\n  */\ncontract CarefulMath {\n\n    /**\n     * @dev Possible error codes that we can return\n     */\n    enum MathError {\n        NO_ERROR,\n        DIVISION_BY_ZERO,\n        INTEGER_OVERFLOW,\n        INTEGER_UNDERFLOW\n    }\n\n    /**\n    * @dev Multiplies two numbers, returns an error on overflow.\n    */\n    function mulUInt(uint a, uint b) internal pure returns (MathError, uint) {\n        if (a == 0) {\n            return (MathError.NO_ERROR, 0);\n        }\n\n        uint c = a * b;\n\n        if (c / a != b) {\n            return (MathError.INTEGER_OVERFLOW, 0);\n        } else {\n            return (MathError.NO_ERROR, c);\n        }\n    }\n\n    /**\n    * @dev Integer division of two numbers, truncating the quotient.\n    */\n    function divUInt(uint a, uint b) internal pure returns (MathError, uint) {\n        if (b == 0) {\n            return (MathError.DIVISION_BY_ZERO, 0);\n        }\n\n        return (MathError.NO_ERROR, a / b);\n    }\n\n    /**\n    * @dev Subtracts two numbers, returns an error on overflow (i.e. if subtrahend is greater than minuend).\n    */\n    function subUInt(uint a, uint b) internal pure returns (MathError, uint) {\n        if (b <= a) {\n            return (MathError.NO_ERROR, a - b);\n        } else {\n            return (MathError.INTEGER_UNDERFLOW, 0);\n        }\n    }\n\n    /**\n    * @dev Adds two numbers, returns an error on overflow.\n    */\n    function addUInt(uint a, uint b) internal pure returns (MathError, uint) {\n        uint c = a + b;\n\n        if (c >= a) {\n            return (MathError.NO_ERROR, c);\n        } else {\n            return (MathError.INTEGER_OVERFLOW, 0);\n        }\n    }\n\n    /**\n    * @dev add a and b and then subtract c\n    */\n    function addThenSubUInt(uint a, uint b, uint c) internal pure returns (MathError, uint) {\n        (MathError err0, uint sum) = addUInt(a, b);\n\n        if (err0 != MathError.NO_ERROR) {\n            return (err0, 0);\n        }\n\n        return subUInt(sum, c);\n    }\n}",
+  "sourcePath": "/Users/jonah/SolidityProject/makewish-contract/contracts/CarefulMath.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/CarefulMath.sol",
+    "exportedSymbols": {
+      "CarefulMath": [
+        1056
+      ]
+    },
+    "id": 1057,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 861,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".22",
+          "<",
+          "0.9",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:32:6"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "CarefulMath",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 862,
+          "nodeType": "StructuredDocumentation",
+          "src": "66:216:6",
+          "text": " @title Careful Math\n @author Compound\n @notice Derived from OpenZeppelin's SafeMath library\n         https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol"
+        },
+        "fullyImplemented": true,
+        "id": 1056,
+        "linearizedBaseContracts": [
+          1056
+        ],
+        "name": "CarefulMath",
+        "nameLocation": "292:11:6",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "CarefulMath.MathError",
+            "id": 867,
+            "members": [
+              {
+                "id": 863,
+                "name": "NO_ERROR",
+                "nameLocation": "404:8:6",
+                "nodeType": "EnumValue",
+                "src": "404:8:6"
+              },
+              {
+                "id": 864,
+                "name": "DIVISION_BY_ZERO",
+                "nameLocation": "422:16:6",
+                "nodeType": "EnumValue",
+                "src": "422:16:6"
+              },
+              {
+                "id": 865,
+                "name": "INTEGER_OVERFLOW",
+                "nameLocation": "448:16:6",
+                "nodeType": "EnumValue",
+                "src": "448:16:6"
+              },
+              {
+                "id": 866,
+                "name": "INTEGER_UNDERFLOW",
+                "nameLocation": "474:17:6",
+                "nodeType": "EnumValue",
+                "src": "474:17:6"
+              }
+            ],
+            "name": "MathError",
+            "nameLocation": "384:9:6",
+            "nodeType": "EnumDefinition",
+            "src": "379:118:6"
+          },
+          {
+            "body": {
+              "id": 914,
+              "nodeType": "Block",
+              "src": "656:258:6",
+              "statements": [
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 882,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 880,
+                      "name": "a",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 870,
+                      "src": "670:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "hexValue": "30",
+                      "id": 881,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "675:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "670:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 889,
+                  "nodeType": "IfStatement",
+                  "src": "666:67:6",
+                  "trueBody": {
+                    "id": 888,
+                    "nodeType": "Block",
+                    "src": "678:55:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 883,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "700:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 884,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "NO_ERROR",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 863,
+                              "src": "700:18:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "hexValue": "30",
+                              "id": 885,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "720:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "id": 886,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "699:23:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_rational_0_by_1_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,int_const 0)"
+                          }
+                        },
+                        "functionReturnParameters": 879,
+                        "id": 887,
+                        "nodeType": "Return",
+                        "src": "692:30:6"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "assignments": [
+                    891
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 891,
+                      "mutability": "mutable",
+                      "name": "c",
+                      "nameLocation": "748:1:6",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 914,
+                      "src": "743:6:6",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 890,
+                        "name": "uint",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "743:4:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 895,
+                  "initialValue": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 894,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 892,
+                      "name": "a",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 870,
+                      "src": "752:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "*",
+                    "rightExpression": {
+                      "id": 893,
+                      "name": "b",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 872,
+                      "src": "756:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "752:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "743:14:6"
+                },
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 900,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "id": 898,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "id": 896,
+                        "name": "c",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 891,
+                        "src": "772:1:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "/",
+                      "rightExpression": {
+                        "id": 897,
+                        "name": "a",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 870,
+                        "src": "776:1:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "src": "772:5:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "!=",
+                    "rightExpression": {
+                      "id": 899,
+                      "name": "b",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 872,
+                      "src": "781:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "772:10:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "id": 912,
+                    "nodeType": "Block",
+                    "src": "853:55:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 907,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "875:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 908,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "NO_ERROR",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 863,
+                              "src": "875:18:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "id": 909,
+                              "name": "c",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 891,
+                              "src": "895:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "id": 910,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "874:23:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_uint256_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,uint256)"
+                          }
+                        },
+                        "functionReturnParameters": 879,
+                        "id": 911,
+                        "nodeType": "Return",
+                        "src": "867:30:6"
+                      }
+                    ]
+                  },
+                  "id": 913,
+                  "nodeType": "IfStatement",
+                  "src": "768:140:6",
+                  "trueBody": {
+                    "id": 906,
+                    "nodeType": "Block",
+                    "src": "784:63:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 901,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "806:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 902,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "INTEGER_OVERFLOW",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 865,
+                              "src": "806:26:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "hexValue": "30",
+                              "id": 903,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "834:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "id": 904,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "805:31:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_rational_0_by_1_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,int_const 0)"
+                          }
+                        },
+                        "functionReturnParameters": 879,
+                        "id": 905,
+                        "nodeType": "Return",
+                        "src": "798:38:6"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": {
+              "id": 868,
+              "nodeType": "StructuredDocumentation",
+              "src": "503:75:6",
+              "text": " @dev Multiplies two numbers, returns an error on overflow."
+            },
+            "id": 915,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mulUInt",
+            "nameLocation": "592:7:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 873,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 870,
+                  "mutability": "mutable",
+                  "name": "a",
+                  "nameLocation": "605:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 915,
+                  "src": "600:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 869,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "600:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 872,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nameLocation": "613:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 915,
+                  "src": "608:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 871,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "608:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "599:16:6"
+            },
+            "returnParameters": {
+              "id": 879,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 876,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 915,
+                  "src": "639:9:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_MathError_$867",
+                    "typeString": "enum CarefulMath.MathError"
+                  },
+                  "typeName": {
+                    "id": 875,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 874,
+                      "name": "MathError",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 867,
+                      "src": "639:9:6"
+                    },
+                    "referencedDeclaration": 867,
+                    "src": "639:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_MathError_$867",
+                      "typeString": "enum CarefulMath.MathError"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 878,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 915,
+                  "src": "650:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 877,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "650:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "638:17:6"
+            },
+            "scope": 1056,
+            "src": "583:331:6",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 945,
+              "nodeType": "Block",
+              "src": "1077:136:6",
+              "statements": [
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 930,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 928,
+                      "name": "b",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 920,
+                      "src": "1091:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "hexValue": "30",
+                      "id": 929,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1096:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1091:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 937,
+                  "nodeType": "IfStatement",
+                  "src": "1087:75:6",
+                  "trueBody": {
+                    "id": 936,
+                    "nodeType": "Block",
+                    "src": "1099:63:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 931,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "1121:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 932,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "DIVISION_BY_ZERO",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 864,
+                              "src": "1121:26:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "hexValue": "30",
+                              "id": 933,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1149:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "id": 934,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "1120:31:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_rational_0_by_1_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,int_const 0)"
+                          }
+                        },
+                        "functionReturnParameters": 927,
+                        "id": 935,
+                        "nodeType": "Return",
+                        "src": "1113:38:6"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "expression": {
+                    "components": [
+                      {
+                        "expression": {
+                          "id": 938,
+                          "name": "MathError",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 867,
+                          "src": "1180:9:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                            "typeString": "type(enum CarefulMath.MathError)"
+                          }
+                        },
+                        "id": 939,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "NO_ERROR",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 863,
+                        "src": "1180:18:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_enum$_MathError_$867",
+                          "typeString": "enum CarefulMath.MathError"
+                        }
+                      },
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 942,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "id": 940,
+                          "name": "a",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 918,
+                          "src": "1200:1:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "/",
+                        "rightExpression": {
+                          "id": 941,
+                          "name": "b",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 920,
+                          "src": "1204:1:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1200:5:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "id": 943,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1179:27:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_uint256_$",
+                      "typeString": "tuple(enum CarefulMath.MathError,uint256)"
+                    }
+                  },
+                  "functionReturnParameters": 927,
+                  "id": 944,
+                  "nodeType": "Return",
+                  "src": "1172:34:6"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 916,
+              "nodeType": "StructuredDocumentation",
+              "src": "920:79:6",
+              "text": " @dev Integer division of two numbers, truncating the quotient."
+            },
+            "id": 946,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "divUInt",
+            "nameLocation": "1013:7:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 921,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 918,
+                  "mutability": "mutable",
+                  "name": "a",
+                  "nameLocation": "1026:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 946,
+                  "src": "1021:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 917,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1021:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 920,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nameLocation": "1034:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 946,
+                  "src": "1029:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 919,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1029:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1020:16:6"
+            },
+            "returnParameters": {
+              "id": 927,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 924,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 946,
+                  "src": "1060:9:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_MathError_$867",
+                    "typeString": "enum CarefulMath.MathError"
+                  },
+                  "typeName": {
+                    "id": 923,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 922,
+                      "name": "MathError",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 867,
+                      "src": "1060:9:6"
+                    },
+                    "referencedDeclaration": 867,
+                    "src": "1060:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_MathError_$867",
+                      "typeString": "enum CarefulMath.MathError"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 926,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 946,
+                  "src": "1071:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 925,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1071:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1059:17:6"
+            },
+            "scope": 1056,
+            "src": "1004:209:6",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 977,
+              "nodeType": "Block",
+              "src": "1416:157:6",
+              "statements": [
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 961,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 959,
+                      "name": "b",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 951,
+                      "src": "1430:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<=",
+                    "rightExpression": {
+                      "id": 960,
+                      "name": "a",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 949,
+                      "src": "1435:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1430:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "id": 975,
+                    "nodeType": "Block",
+                    "src": "1503:64:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 970,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "1525:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 971,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "INTEGER_UNDERFLOW",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 866,
+                              "src": "1525:27:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "hexValue": "30",
+                              "id": 972,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1554:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "id": 973,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "1524:32:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_rational_0_by_1_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,int_const 0)"
+                          }
+                        },
+                        "functionReturnParameters": 958,
+                        "id": 974,
+                        "nodeType": "Return",
+                        "src": "1517:39:6"
+                      }
+                    ]
+                  },
+                  "id": 976,
+                  "nodeType": "IfStatement",
+                  "src": "1426:141:6",
+                  "trueBody": {
+                    "id": 969,
+                    "nodeType": "Block",
+                    "src": "1438:59:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 962,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "1460:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 963,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "NO_ERROR",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 863,
+                              "src": "1460:18:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "id": 966,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "id": 964,
+                                "name": "a",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 949,
+                                "src": "1480:1:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "-",
+                              "rightExpression": {
+                                "id": 965,
+                                "name": "b",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 951,
+                                "src": "1484:1:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "src": "1480:5:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "id": 967,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "1459:27:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_uint256_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,uint256)"
+                          }
+                        },
+                        "functionReturnParameters": 958,
+                        "id": 968,
+                        "nodeType": "Return",
+                        "src": "1452:34:6"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": {
+              "id": 947,
+              "nodeType": "StructuredDocumentation",
+              "src": "1219:119:6",
+              "text": " @dev Subtracts two numbers, returns an error on overflow (i.e. if subtrahend is greater than minuend)."
+            },
+            "id": 978,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "subUInt",
+            "nameLocation": "1352:7:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 952,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 949,
+                  "mutability": "mutable",
+                  "name": "a",
+                  "nameLocation": "1365:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 978,
+                  "src": "1360:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 948,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1360:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 951,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nameLocation": "1373:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 978,
+                  "src": "1368:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 950,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1368:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1359:16:6"
+            },
+            "returnParameters": {
+              "id": 958,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 955,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 978,
+                  "src": "1399:9:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_MathError_$867",
+                    "typeString": "enum CarefulMath.MathError"
+                  },
+                  "typeName": {
+                    "id": 954,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 953,
+                      "name": "MathError",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 867,
+                      "src": "1399:9:6"
+                    },
+                    "referencedDeclaration": 867,
+                    "src": "1399:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_MathError_$867",
+                      "typeString": "enum CarefulMath.MathError"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 957,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 978,
+                  "src": "1410:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 956,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1410:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1398:17:6"
+            },
+            "scope": 1056,
+            "src": "1343:230:6",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1013,
+              "nodeType": "Block",
+              "src": "1726:177:6",
+              "statements": [
+                {
+                  "assignments": [
+                    992
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 992,
+                      "mutability": "mutable",
+                      "name": "c",
+                      "nameLocation": "1741:1:6",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 1013,
+                      "src": "1736:6:6",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 991,
+                        "name": "uint",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1736:4:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 996,
+                  "initialValue": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 995,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 993,
+                      "name": "a",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 981,
+                      "src": "1745:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "id": 994,
+                      "name": "b",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 983,
+                      "src": "1749:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1745:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1736:14:6"
+                },
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 999,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 997,
+                      "name": "c",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 992,
+                      "src": "1765:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": ">=",
+                    "rightExpression": {
+                      "id": 998,
+                      "name": "a",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 981,
+                      "src": "1770:1:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1765:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "id": 1011,
+                    "nodeType": "Block",
+                    "src": "1834:63:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 1006,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "1856:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 1007,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "INTEGER_OVERFLOW",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 865,
+                              "src": "1856:26:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "hexValue": "30",
+                              "id": 1008,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1884:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "id": 1009,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "1855:31:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_rational_0_by_1_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,int_const 0)"
+                          }
+                        },
+                        "functionReturnParameters": 990,
+                        "id": 1010,
+                        "nodeType": "Return",
+                        "src": "1848:38:6"
+                      }
+                    ]
+                  },
+                  "id": 1012,
+                  "nodeType": "IfStatement",
+                  "src": "1761:136:6",
+                  "trueBody": {
+                    "id": 1005,
+                    "nodeType": "Block",
+                    "src": "1773:55:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "expression": {
+                                "id": 1000,
+                                "name": "MathError",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 867,
+                                "src": "1795:9:6",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                                  "typeString": "type(enum CarefulMath.MathError)"
+                                }
+                              },
+                              "id": 1001,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberName": "NO_ERROR",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 863,
+                              "src": "1795:18:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "id": 1002,
+                              "name": "c",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 992,
+                              "src": "1815:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "id": 1003,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "1794:23:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_uint256_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,uint256)"
+                          }
+                        },
+                        "functionReturnParameters": 990,
+                        "id": 1004,
+                        "nodeType": "Return",
+                        "src": "1787:30:6"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": {
+              "id": 979,
+              "nodeType": "StructuredDocumentation",
+              "src": "1579:69:6",
+              "text": " @dev Adds two numbers, returns an error on overflow."
+            },
+            "id": 1014,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "addUInt",
+            "nameLocation": "1662:7:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 984,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 981,
+                  "mutability": "mutable",
+                  "name": "a",
+                  "nameLocation": "1675:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1014,
+                  "src": "1670:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 980,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1670:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 983,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nameLocation": "1683:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1014,
+                  "src": "1678:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 982,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1678:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1669:16:6"
+            },
+            "returnParameters": {
+              "id": 990,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 987,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1014,
+                  "src": "1709:9:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_MathError_$867",
+                    "typeString": "enum CarefulMath.MathError"
+                  },
+                  "typeName": {
+                    "id": 986,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 985,
+                      "name": "MathError",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 867,
+                      "src": "1709:9:6"
+                    },
+                    "referencedDeclaration": 867,
+                    "src": "1709:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_MathError_$867",
+                      "typeString": "enum CarefulMath.MathError"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 989,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1014,
+                  "src": "1720:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 988,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1720:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1708:17:6"
+            },
+            "scope": 1056,
+            "src": "1653:250:6",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1054,
+              "nodeType": "Block",
+              "src": "2055:175:6",
+              "statements": [
+                {
+                  "assignments": [
+                    1031,
+                    1033
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 1031,
+                      "mutability": "mutable",
+                      "name": "err0",
+                      "nameLocation": "2076:4:6",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 1054,
+                      "src": "2066:14:6",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_MathError_$867",
+                        "typeString": "enum CarefulMath.MathError"
+                      },
+                      "typeName": {
+                        "id": 1030,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 1029,
+                          "name": "MathError",
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 867,
+                          "src": "2066:9:6"
+                        },
+                        "referencedDeclaration": 867,
+                        "src": "2066:9:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_enum$_MathError_$867",
+                          "typeString": "enum CarefulMath.MathError"
+                        }
+                      },
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 1033,
+                      "mutability": "mutable",
+                      "name": "sum",
+                      "nameLocation": "2087:3:6",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 1054,
+                      "src": "2082:8:6",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 1032,
+                        "name": "uint",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2082:4:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 1038,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "id": 1035,
+                        "name": "a",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1017,
+                        "src": "2102:1:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "id": 1036,
+                        "name": "b",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1019,
+                        "src": "2105:1:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 1034,
+                      "name": "addUInt",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1014,
+                      "src": "2094:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_enum$_MathError_$867_$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (enum CarefulMath.MathError,uint256)"
+                      }
+                    },
+                    "id": 1037,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2094:13:6",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_uint256_$",
+                      "typeString": "tuple(enum CarefulMath.MathError,uint256)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2065:42:6"
+                },
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_enum$_MathError_$867",
+                      "typeString": "enum CarefulMath.MathError"
+                    },
+                    "id": 1042,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 1039,
+                      "name": "err0",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1031,
+                      "src": "2122:4:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_MathError_$867",
+                        "typeString": "enum CarefulMath.MathError"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "!=",
+                    "rightExpression": {
+                      "expression": {
+                        "id": 1040,
+                        "name": "MathError",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 867,
+                        "src": "2130:9:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_enum$_MathError_$867_$",
+                          "typeString": "type(enum CarefulMath.MathError)"
+                        }
+                      },
+                      "id": 1041,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "memberName": "NO_ERROR",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 863,
+                      "src": "2130:18:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_MathError_$867",
+                        "typeString": "enum CarefulMath.MathError"
+                      }
+                    },
+                    "src": "2122:26:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 1048,
+                  "nodeType": "IfStatement",
+                  "src": "2118:73:6",
+                  "trueBody": {
+                    "id": 1047,
+                    "nodeType": "Block",
+                    "src": "2150:41:6",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "id": 1043,
+                              "name": "err0",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 1031,
+                              "src": "2172:4:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_enum$_MathError_$867",
+                                "typeString": "enum CarefulMath.MathError"
+                              }
+                            },
+                            {
+                              "hexValue": "30",
+                              "id": 1044,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "2178:1:6",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "id": 1045,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "2171:9:6",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_rational_0_by_1_$",
+                            "typeString": "tuple(enum CarefulMath.MathError,int_const 0)"
+                          }
+                        },
+                        "functionReturnParameters": 1028,
+                        "id": 1046,
+                        "nodeType": "Return",
+                        "src": "2164:16:6"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "id": 1050,
+                        "name": "sum",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1033,
+                        "src": "2216:3:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "id": 1051,
+                        "name": "c",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1021,
+                        "src": "2221:1:6",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 1049,
+                      "name": "subUInt",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 978,
+                      "src": "2208:7:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_enum$_MathError_$867_$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (enum CarefulMath.MathError,uint256)"
+                      }
+                    },
+                    "id": 1052,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2208:15:6",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_enum$_MathError_$867_$_t_uint256_$",
+                      "typeString": "tuple(enum CarefulMath.MathError,uint256)"
+                    }
+                  },
+                  "functionReturnParameters": 1028,
+                  "id": 1053,
+                  "nodeType": "Return",
+                  "src": "2201:22:6"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1015,
+              "nodeType": "StructuredDocumentation",
+              "src": "1909:53:6",
+              "text": " @dev add a and b and then subtract c"
+            },
+            "id": 1055,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "addThenSubUInt",
+            "nameLocation": "1976:14:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1022,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1017,
+                  "mutability": "mutable",
+                  "name": "a",
+                  "nameLocation": "1996:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1055,
+                  "src": "1991:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1016,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1991:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1019,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nameLocation": "2004:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1055,
+                  "src": "1999:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1018,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1999:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1021,
+                  "mutability": "mutable",
+                  "name": "c",
+                  "nameLocation": "2012:1:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1055,
+                  "src": "2007:6:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1020,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2007:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1990:24:6"
+            },
+            "returnParameters": {
+              "id": 1028,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1025,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1055,
+                  "src": "2038:9:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_MathError_$867",
+                    "typeString": "enum CarefulMath.MathError"
+                  },
+                  "typeName": {
+                    "id": 1024,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1023,
+                      "name": "MathError",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 867,
+                      "src": "2038:9:6"
+                    },
+                    "referencedDeclaration": 867,
+                    "src": "2038:9:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_MathError_$867",
+                      "typeString": "enum CarefulMath.MathError"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1027,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1055,
+                  "src": "2049:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1026,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2049:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2037:17:6"
+            },
+            "scope": 1056,
+            "src": "1967:263:6",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 1057,
+        "src": "283:1949:6",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:2200:6"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.7",
+  "updatedAt": "2022-05-19T07:20:12.131Z",
+  "devdoc": {
+    "author": "Compound",
+    "kind": "dev",
+    "methods": {},
+    "title": "Careful Math",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "notice": "Derived from OpenZeppelin's SafeMath library         https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol",
+    "version": 1
+  }
+}

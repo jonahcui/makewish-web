@@ -1,0 +1,114 @@
+.main {
+  overflow-y: auto;
+  background-color: #000000;
+}
+
+.container {
+
+}
+
+.stateText {
+  height: 58px;
+  font-size: 40px;
+  font-family: Source Han Sans CN-Heavy, Source Han Sans CN;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 56px;
+}
+.primaryColor {
+  color: #A183EE !important;
+}
+
+.margin4 {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.text26 {
+  font-size: 26px;
+  font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+  font-weight: 400;
+  color: #D6D6D6;
+  line-height: 36px;
+}
+
+.text22 {
+  font-size: 18px;
+  font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+  font-weight: 400;
+  color: #D6D6D6;
+  line-height: 25px;
+}
+
+.text18 {
+  font-size: 18px;
+  font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+  font-weight: 400;
+  color: #D6D6D6;
+  line-height: 25px;
+}
+
+.text16 {
+  font-size: 16px;
+  font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+  font-weight: 400;
+  color: #D6D6D6;
+  line-height: 25px;
+}
+
+.text14 {
+  font-size: 14px;
+  font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+  font-weight: 400;
+  color: #D6D6D6;
+  line-height: 20px;
+}
+
+.purchaseBtn {
+  margin-top: 22px;
+
+  height: 42px;
+  background: linear-gradient(to right, #A183EE, pink);
+  border-radius: 0px 0px 0px 0px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  box-shadow: 10px 10px #FFFFFF;
+}
+
+.borderBottom {
+  border-bottom: 1px solid #D8D8D8;
+}
+
+.joinRecordTitle {
+  margin-top: 50px;
+  height: 58px;
+  font-size: 40px;
+  font-family: Source Han Sans CN-Heavy, Source Han Sans CN;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 56px;
+}
+
+.headCell {
+
+  > span {
+    text-align: center;
+    font-size: 18px;
+    font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+    font-weight: 400;
+    color: #F1F1F1;
+    line-height: 28px;
+  }
+}
+.dataCell {
+
+  > span {
+    text-align: center;
+    font-size: 16px;
+    font-family: Source Han Sans CN-Regular, Source Han Sans CN;
+    font-weight: 400;
+    color: #F1F1F1;
+    line-height: 28px;
+  }
+}
