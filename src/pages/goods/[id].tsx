@@ -15,6 +15,7 @@ import BigNumber from "bignumber.js";
 import {getGoodStatus, GoodStatus} from "../../utils/StatusUtils";
 import {formatTime} from "../../utils/time";
 import {exchangeAndPurchase} from "../../feature/comptroller/comptrollerAPI";
+import Countdown from "react-countdown";
 
 const UserRow =({record}) => {
     if (!record) {
@@ -32,8 +33,7 @@ const UserRow =({record}) => {
     </Table.Row>
 }
 
-const GoodStatusTag = ({goodStatus} : {goodStatus: GoodStatus}) => {
-    console.log(goodStatus);
+const GoodStatusTag = ({goodStatus, goodInfo} : {goodStatus: GoodStatus}) => {
     if (goodStatus == GoodStatus.NON_GOOD) {
         return <div>{" "}</div>
     }
@@ -51,7 +51,12 @@ const GoodStatusTag = ({goodStatus} : {goodStatus: GoodStatus}) => {
     }
 
     if (goodStatus == GoodStatus.IN_PROGRESS) {
-        return <div className={classNames(styles.stateText)}>进行中</div>
+        return <div>
+            <div className={classNames(styles.stateText)}>进行中</div>
+            <div className={classNames(styles.stateText)}>
+                <Countdown date={parseInt(goodInfo.lockedTime)  * 1000} className={styles.stateText} />
+            </div>
+        </div>
     }
 
     return <div>{" "}</div>
@@ -190,7 +195,7 @@ const Detail: NextPage = () => {
                 <Pane display={"flex"} justifyContent={"center"} marginTop={50}>
                     <Pane style={{marginRight: 20}}>
                         {goodInfo && goodInfo.fileHash && <Pane is="img" style={{width: 282, height: 282}} src={"https://ipfs.io/ipfs/QmTTQ5XpwdndHPjd9o8AKAnuTb5QQdLBPZEmjJvdPhnoz3?filename=pet.jpg"} /> }
-                        <GoodStatusTag goodStatus={goodStatus} />
+                        <GoodStatusTag goodStatus={goodStatus} goodInfo={goodInfo} />
                     </Pane>
                     <Pane marginBottom={50} width={500}>
                         <div className={styles.text26} style={{marginBottom: 8}}>{goodInfo?.goodName}</div>

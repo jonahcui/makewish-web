@@ -118,8 +118,8 @@ export async function getComptrollerContract() {
     }
     const provider = new Web3.providers.HttpProvider(store.getState().wallet.configuration.networkAddress as string);
     const web3 = new Web3(provider);
-    const tokenAddress  = store.getState().wallet.configuration.mainContractAddress;
-    return new web3.eth.Contract(Comptroller.abi as AbiItem[], tokenAddress);
+    const mainContractAddress  = store.getState().wallet.configuration.mainContractAddress;
+    return new web3.eth.Contract(Comptroller.abi as AbiItem[], mainContractAddress);
 }
 
 

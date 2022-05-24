@@ -17,6 +17,7 @@
     "moment": "^2.29.3",
     "next": "12.1.6",
     "react": "18.1.0",
+    "react-countdown": "^2.3.2",
     "react-datetime-picker": "^3.5.0",
     "react-dom": "18.1.0",
     "react-redux": "^8.0.1",

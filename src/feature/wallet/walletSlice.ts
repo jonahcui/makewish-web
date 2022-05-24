@@ -32,9 +32,9 @@ const initialState: WalletState = {
         networkId: 5777,
         chainId: '0x539',
 
-        mainContractAddress: '0x28c0361351Fe6d459fDd3709f1AC460bf95038AF',
-        tokenAddress: '0xC63500D4D6BD54BEC8829520df63228dcC6425CA',
-        apiContractAddress: '0x7B9813f6A1D2D2a3b447651518C632B39A1f92D6'
+        mainContractAddress: '0xbDdE187e79F610e0B82C4952f16Ce4dC8448E56F',
+        tokenAddress: '0xfDF3e6477cbcFBd132826320Cdb06bc4B5270a09',
+        apiContractAddress: '0x8BE423679ad26397dc969553290b5523C56192Ea'
     }
 }
 
