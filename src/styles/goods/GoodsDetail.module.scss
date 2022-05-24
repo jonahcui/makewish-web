@@ -14,6 +14,10 @@
   font-weight: 800;
   color: #FFFFFF;
   line-height: 56px;
+  text-align: center;
+}
+.greyColor {
+  color: #E6E8F0 !important;
 }
 .primaryColor {
   color: #A183EE !important;
@@ -76,6 +80,18 @@
   box-shadow: 10px 10px #FFFFFF;
 }
 
+.purchaseBtnDisabled {
+  margin-top: 22px;
+
+  height: 42px;
+  background: linear-gradient(to right, #c1c4d6, #474d66);
+  border-radius: 0px 0px 0px 0px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  box-shadow: 10px 10px #FFFFFF;
+}
+
 .borderBottom {
   border-bottom: 1px solid #D8D8D8;
 }
@@ -110,5 +126,14 @@
     font-weight: 400;
     color: #F1F1F1;
     line-height: 28px;
+  }
+}
+
+
+.page {
+  float: right;
+
+  > button > ul > li {
+    background-color: transparent !important;
   }
 }

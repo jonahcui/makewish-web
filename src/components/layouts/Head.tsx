@@ -1,13 +1,16 @@
-import React from 'react'
-import { Pane, majorScale, Link as EvergreenLink } from 'evergreen-ui'
+import React, {useState} from 'react'
+import {Link as EvergreenLink, majorScale, Pane} from 'evergreen-ui'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import {inspect} from "util";
+import {useRouter} from 'next/router'
 import styles from './Head.module.scss'
+import {useAppDispatch} from '../../app/hooks'
+import Wallet from "./Wallet";
+import PublishGood from "./PublishGood";
 
 interface Props {}
 
 const Head: React.FC<Props> = () => {
+    const dispatch = useAppDispatch()
     const router = useRouter()
     const { pathname } = router
     const parentPath = pathname.split('/')[1]
@@ -28,7 +31,7 @@ const Head: React.FC<Props> = () => {
             paddingX={majorScale(5)}
         >
             <Pane display="flex" alignItems="center" width={236}>
-                <Link href="/pages">
+                <Link href="/">
                     <Pane width={100} height={24} cursor="pointer" className={styles.logo} >
                         <i>
                             MAKEWISH
@@ -39,7 +42,7 @@ const Head: React.FC<Props> = () => {
             <Pane flex={1}>
 
             </Pane>
-            <Pane display="flex" justifyContent="flex-end">
+            <Pane display="flex" justifyContent="flex-end" suppressHydrationWarning>
                 <Link href="/goods/list" passHref>
                     <EvergreenLink color={parentPath !== 'goods' ? 'neutral' : undefined} marginRight={majorScale(3)}>
                         浏览商品
@@ -50,16 +53,13 @@ const Head: React.FC<Props> = () => {
                         历史参与
                     </EvergreenLink>
                 </Link>
-                <Link href="/components" passHref>
+                <Link href="/src/componentsents" passHref>
                     <EvergreenLink color={parentPath !== 'components' ? 'neutral' : undefined} marginRight={majorScale(3)}>
                         个人中心
                     </EvergreenLink>
                 </Link>
-                <Link href="/patterns" passHref style={{width: 150}}>
-                    <EvergreenLink color={parentPath !== 'patterns' ? 'neutral' : undefined} marginRight={majorScale(3)}>
-                        链接钱包
-                    </EvergreenLink>
-                </Link>
+                <Wallet />
+                <PublishGood />
             </Pane>
         </Pane>
     )
