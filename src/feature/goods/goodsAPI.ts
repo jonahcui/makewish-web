@@ -14,6 +14,10 @@ export interface GoodInfo {
     goodInfo: string
     goodName: string
     fileHash: string
+    paybackFee: number
+    winnerBlock: number
+    winnerIndex: number
+    winnerTime: number
 }
 
 export interface UserGoodRecord {

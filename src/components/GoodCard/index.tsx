@@ -1,4 +1,4 @@
-import {Badge, Button, Card, Nudge, Pane, Spinner} from "evergreen-ui";
+import {Badge, Button, Card, majorScale, Nudge, Pane, Spinner} from "evergreen-ui";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import styles from "./GoodCard.module.scss"
@@ -52,7 +52,7 @@ const GoodCard = ({web3, index} : Props) => {
     if (loadding) {
         return <Spinner className={styles.card}/>
     }
-    return <Card className={styles.card}>
+    return <Card className={styles.card} style={{marginRight: majorScale(2)}}>
         {_getTag()}
         <Pane is={"img"} src={"/wish2.png"} width={255} height={255} />
         <div className={styles.goodName}>{goodInfo?.goodId} -- {goodInfo?.goodName}</div>

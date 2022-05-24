@@ -1,6 +1,6 @@
 import type {NextPage} from 'next'
 import styles from '../../styles/goods/GoodsDetail.module.scss'
-import {LinkIcon, Pagination, Pane, Table, TextInput} from "evergreen-ui";
+import {LinkIcon, Pagination, Pane, Table, TextInput, toaster} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
 import LogoDivider from "../../components/LogoDivider";
 import classNames from "classnames";
@@ -13,6 +13,8 @@ import moment from "moment";
 import {getUserBalance} from "../../feature/token/tokenAPI";
 import BigNumber from "bignumber.js";
 import {getGoodStatus, GoodStatus} from "../../utils/StatusUtils";
+import {formatTime} from "../../utils/time";
+import {exchangeAndPurchase} from "../../feature/comptroller/comptrollerAPI";
 
 const UserRow =({record}) => {
     if (!record) {
@@ -22,7 +24,7 @@ const UserRow =({record}) => {
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.user.substring(2, 8)}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.count}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={500}>{record?.user}</Table.TextCell>
-        <Table.TextCell className={styles.dataCell} flexBasis={300}>{moment(record?.joinTime * 1000).format("YYYY-MM-DD HH:mm:ss")}</Table.TextCell>
+        <Table.TextCell className={styles.dataCell} flexBasis={300}>{formatTime(record?.joinTime)}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={200}>{record?.joinBlockNum}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={50}>
             <LinkIcon />
@@ -63,10 +65,16 @@ const getTicket =(id, index) => {
     return id + ("0000000000" + index).slice(-10)
 }
 
-const getNeedEth = (balance: BigNumber, count: number) => {
+const getNeedEth = (balance: BigNumber, count: string) => {
     const decimal = new BigNumber(10).exponentiatedBy(18);
-    const needWishToken  = new BigNumber(count).times(decimal).minus(balance)
-    return needWishToken.div(decimal).toFormat(4, BigNumber.ROUND_DOWN)
+    const needWishToken  = new BigNumber(count).times(decimal).minus(balance.times(decimal))
+    return needWishToken.div(decimal).toFormat(18)
+}
+
+const getNeedWei = (balance: BigNumber, count: string): BigNumber => {
+    const decimal = new BigNumber(10).exponentiatedBy(18);
+    console.log(new BigNumber(count).times(decimal).minus(balance.times(decimal)).toFormat(18))
+    return new BigNumber(count).times(decimal).minus(balance.times(decimal))
 }
 
 const Detail: NextPage = () => {
@@ -82,7 +90,7 @@ const Detail: NextPage = () => {
         totalPages: 0,
     });
 
-    const [count, setCount] = useState(1);
+    const [count, setCount] = useState('1');
     const [goodStatus, setGoodStatus] = useState<GoodStatus>(GoodStatus.NON_GOOD);
 
     const [userRecords, setUserRecords] = useState<Array<UserGoodRecord>>([]);
@@ -91,12 +99,14 @@ const Detail: NextPage = () => {
 
     const loadGoodInfo = async () => {
         setLoadding(true)
+        if (!id) {
+            return;
+        }
         const good = await getGoodInfo(parseInt(id as string));
         if (good != null) {
             setGoodInfo(good)
             setGoodStatus(getGoodStatus(good));
         }
-        console.log(good)
         setLoadding(false)
         setPage({
             pageSize: 20,
@@ -110,6 +120,9 @@ const Detail: NextPage = () => {
 
     const _loadUsers = async () => {
         const totalRecords = goodInfo?.joinedUsers;
+        if (!totalRecords || totalRecords == 0) {
+            return;
+        }
         const offset = getOffset(page.current, page.pageSize, totalRecords as number);
         const result = []
         for (let i = 0; i < page.pageSize; i++) {
@@ -117,7 +130,6 @@ const Detail: NextPage = () => {
             if (index < 0) {
                 break;
             }
-            console.log(id, index);
             const userRecord = await getUserRecord(id, index);
             result.push(userRecord);
         }
@@ -143,7 +155,33 @@ const Detail: NextPage = () => {
 
 
     const onMaxCount = () => {
-        setCount(100)
+        setCount('100')
+    }
+
+    const onCountChange = (e) => {
+        if (!BigNumber.isBigNumber(e.target.value)) {
+            setCount(1)
+        } else {
+            setCount(count)
+        }
+    }
+
+    const purchase = async () => {
+        try {
+            if (!wallet.account || !goodInfo?.goodId || !count) {
+                toaster.danger("请连接钱包后购买");
+                return;
+            }
+            const wei = getNeedWei(userBalance, count);
+            console.log("购买：", [wallet.account, goodInfo?.goodId, count.toString(), wei.toString(),])
+            const resp = await exchangeAndPurchase(wallet.account, goodInfo?.goodId, new BigNumber(count), wei);
+            console.log("购买成功：", resp.txHash)
+            toaster.success('商品购买成功: txHash为: ' + resp.transactionHash)
+        } catch (e) {
+            console.error("购买失败：", e)
+            toaster.danger("购买失败: " + e);
+        }
+
     }
 
     return <div>
@@ -166,7 +204,8 @@ const Detail: NextPage = () => {
                             已参与人数/总购买份数: {goodInfo?.joinedUsers} / {goodInfo?.ticketCounts}
                             </span>
                         </div>
-                        <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
+                        {/*开奖后展示*/}
+                        {goodStatus === GoodStatus.SUCCESS && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
                             <div className={styles.text16} style={{marginBottom: 4}}>
                                 大赢家: {goodInfo?.winner}
                             </div>
@@ -177,9 +216,12 @@ const Detail: NextPage = () => {
                                 手续费: {goodInfo?.maintenanceFee}
                             </div>
                             <div className={styles.text16} style={{marginBottom: 4}}>
-                                返还金额（每票）: {goodInfo?.winner}
+                                返还金额（每票）: {goodInfo?.paybackFee}
                             </div>
-                        </Pane>
+                            <div className={styles.text16} style={{marginBottom: 4}}>
+                                开奖时间(开奖block): {formatTime(goodInfo?.winnerTime)}  ({goodInfo?.winnerBlock})
+                            </div>
+                        </Pane>}
                         {goodStatus !== GoodStatus.SUCCESS && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
                             <div className={styles.text16} style={{marginBottom: 4}}>
                                 填写你的认购份额
@@ -191,7 +233,7 @@ const Detail: NextPage = () => {
                                 </span>
                             </div>
                             <div className={styles.text16} style={{marginBottom: 4}}>当前余额为: <span className={ styles.primaryColor}>
-                                {userBalance + ''} WISH
+                                {userBalance.toFormat(18) + ''} WISH
                             </span> </div>
                             <div className={styles.text16} style={{marginBottom: 4}}>认购花费金额</div>
                             <div>
@@ -199,11 +241,12 @@ const Detail: NextPage = () => {
                                     className={classNames(styles.text22, styles.primaryColor)}>{getNeedEth(userBalance, count)}</span>
                                 <span className={styles.text18}>{' '}ETH {' '}</span>
                             </div>
-                            {goodStatus == GoodStatus.IN_PROGRESS ? <div className={classNames(styles.text26, styles.purchaseBtn)}>
-                                <i>MAKEWISH</i>
-                            </div>: <div className={classNames(styles.text26, styles.purchaseBtnDisabled)}>
-                                <i>MAKEWISH</i>
-                            </div>}
+                            {goodStatus == GoodStatus.IN_PROGRESS ?
+                                <div className={classNames(styles.text26, styles.purchaseBtn)} onClick={purchase}>
+                                    <i>MAKEWISH</i>
+                                </div>
+                                : <div className={classNames(styles.text26, styles.purchaseBtnDisabled)}><i>MAKEWISH</i></div>
+                            }
                         </Pane>}
                         <div className={classNames(styles.text18)} style={{marginBottom: 4, marginTop: 4}}>
                             <i>
