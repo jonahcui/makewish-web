@@ -30,6 +30,7 @@ export interface UserGoodRecord {
 }
 
 export interface UserHistory {
+    goodIndex: number;
     goodId: number;
     user: string;
     count: number;

@@ -10,7 +10,7 @@ import Web3 from "web3";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const decimal = new BigNumber(10).exponentiatedBy(new BigNumber(18));
-export const getData = (ethBalance, wishSupply) => ({
+export const getData = (ethBalance: number, wishSupply: number) => ({
     labels: ['Eth', 'WISH'],
     datasets: [
         {

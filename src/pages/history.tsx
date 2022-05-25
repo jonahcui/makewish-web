@@ -53,7 +53,7 @@ const History: NextPage = () => {
                             return <Table.Row className={styles.rankTableHead} style={{backgroundColor: "black"}}>
                                 <Table.TextCell className={styles.dataCell} flexBasis={100}
                                                 style={{cursor: "pointer"}}
-                                                onClick={() => router.push(`/goods/` + history.goodIndex)}>{history.goodId}</Table.TextCell>
+                                                onClick={() => router.push(`/goods/` + history?.goodIndex)}>{history.goodId}</Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={100}>{history.count}</Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={500}
                                                 style={{cursor: "pointer"}}

@@ -22,7 +22,7 @@ const Home: NextPage = () => {
         const web3 = new Web3(provider);
         const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], apiContractAddress);
         const histories =  await instance.methods.getWinnerHistory().call();
-        setRanks(histories.filter(h => h.user.indexOf("0x0000000000000000") < 0));
+        setRanks(histories.filter((h: any) => h.user.indexOf("0x0000000000000000") < 0));
     }
 
     useEffect(() => {

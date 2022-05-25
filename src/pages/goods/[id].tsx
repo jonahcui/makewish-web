@@ -16,7 +16,7 @@ import {exchangeAndPurchase, pickWinner} from "../../feature/comptroller/comptro
 import Countdown from "react-countdown";
 import _ from 'lodash';
 import {openAddress, openBlock} from "../../utils/explore";
-import {openIPFSImage, readImageFromIPFS} from "../../utils/Web3Request";
+import {openIPFSImage} from "../../utils/Web3Request";
 
 // @ts-ignore
 const UserRow =({record}) => {
