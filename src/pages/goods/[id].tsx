@@ -15,6 +15,8 @@ import {formatTime} from "../../utils/time";
 import {exchangeAndPurchase, pickWinner} from "../../feature/comptroller/comptrollerAPI";
 import Countdown from "react-countdown";
 import _ from 'lodash';
+import {openAddress, openBlock} from "../../utils/explore";
+import {openIPFSImage, readImageFromIPFS} from "../../utils/Web3Request";
 
 // @ts-ignore
 const UserRow =({record}) => {
@@ -24,10 +26,10 @@ const UserRow =({record}) => {
     return <Table.Row className={styles.rankTableHead} style={{backgroundColor: "black"}}>
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.user.substring(2, 8)}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.count}</Table.TextCell>
-        <Table.TextCell className={styles.dataCell} flexBasis={500}>{record?.user}</Table.TextCell>
+        <Table.TextCell className={styles.dataCell} flexBasis={500} style={{cursor: "pointer"}} onClick={() => openAddress(record?.user)}>{record?.user}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={300}>{formatTime(record?.joinTime)}</Table.TextCell>
-        <Table.TextCell className={styles.dataCell} flexBasis={200}>{record?.joinBlockNum}</Table.TextCell>
-        <Table.TextCell className={styles.dataCell} flexBasis={50}>
+        <Table.TextCell className={styles.dataCell} flexBasis={200} style={{cursor: "pointer"}} onClick={() => openBlock(record?.joinBlockNum)}>{record?.joinBlockNum}</Table.TextCell>
+        <Table.TextCell className={styles.dataCell} flexBasis={50}  style={{cursor: "pointer"}} onClick={() => openBlock(record?.joinBlockNum)}>
             <LinkIcon />
         </Table.TextCell>
     </Table.Row>
@@ -51,9 +53,9 @@ const GoodStatusTag = ({goodStatus, goodInfo, isOwner, onPickWinner} : {goodStat
         return <div>
             <div className={classNames(styles.stateText)}>等待开奖结果</div>
             <div className={classNames(styles.stateText)}>
-                <Countdown date={parseInt(goodInfo?.lockedTime)  * 1000 + 10 * 60 * 1000} className={styles.stateText} />
+                <Countdown date={parseInt(goodInfo?.lockedTime as string)  * 1000 + 10 * 60 * 1000} className={styles.stateText} />
             </div>
-            {isOwner && <Button intent="danger" style={{width: "100%"}} onClick={onPickWinner}>开奖</Button>}
+            {isOwner && <Button intent="danger" style={{width: "100%"}} onClick={(e:any) => onPickWinner()}>开奖</Button>}
         </div>
     }
 
@@ -61,7 +63,7 @@ const GoodStatusTag = ({goodStatus, goodInfo, isOwner, onPickWinner} : {goodStat
         return <div>
             <div className={classNames(styles.stateText)}>进行中</div>
             <div className={classNames(styles.stateText)}>
-                <Countdown date={parseInt(goodInfo.lockedTime)  * 1000} className={styles.stateText} />
+                <Countdown date={parseInt(goodInfo?.lockedTime as string)  * 1000} className={styles.stateText} />
             </div>
         </div>
     }
@@ -115,7 +117,7 @@ const Detail: NextPage = () => {
     const [goodStatus, setGoodStatus] = useState<GoodStatus>(GoodStatus.NON_GOOD);
 
     const [userRecords, setUserRecords] = useState<Array<UserGoodRecord>>([]);
-    const [userTickets, setUserTickets] = useState<number[]>([]);
+    const [userTickets, setUserTickets] = useState<Array<number>>([]);
     const [userBalance, setUserBalance] = useState<BigNumber>(new BigNumber(0));
 
     const loadGoodInfo = async () => {
@@ -124,11 +126,12 @@ const Detail: NextPage = () => {
             return;
         }
         const good = await getGoodInfo(parseInt(id as string));
+        setLoadding(false)
         if (good != null) {
             setGoodInfo(good)
             setGoodStatus(getGoodStatus(good));
         }
-        setLoadding(false)
+
         setPage({
             pageSize: 20,
             current: 1,
@@ -214,7 +217,7 @@ const Detail: NextPage = () => {
             loadGoodInfo()
         } catch (e) {
             console.error("购买失败：", e)
-            toaster.danger("购买失败: " + e);
+            toaster.danger("购买失败: 请手动调整你的Gas");
         }
 
     }
@@ -234,7 +237,7 @@ const Detail: NextPage = () => {
             <Pane display={"flex"} alignItems="center" flexDirection="column">
                 <Pane display={"flex"} justifyContent={"center"} marginTop={50}>
                     <Pane style={{marginRight: 20}}>
-                        {goodInfo && goodInfo.fileHash && <Pane is="img" style={{width: 282, height: 282}} src={"https://ipfs.io/ipfs/QmTTQ5XpwdndHPjd9o8AKAnuTb5QQdLBPZEmjJvdPhnoz3?filename=pet.jpg"} /> }
+                        {goodInfo && goodInfo.fileHash && <Pane is="img" style={{width: 282, height: 282}} src={openIPFSImage(goodInfo.fileHash)} /> }
                         <GoodStatusTag goodStatus={goodStatus} goodInfo={goodInfo} isOwner={isOwner} onPickWinner={onPickWinner} />
                     </Pane>
                     <Pane marginBottom={50} width={500}>
@@ -251,8 +254,8 @@ const Detail: NextPage = () => {
                         </div>
                         {/*开奖后展示*/}
                         {goodStatus === GoodStatus.SUCCESS && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
-                            <div className={styles.text16} style={{marginBottom: 4}}>
-                                大赢家: {goodInfo?.winner}
+                            <div className={styles.text16} style={{marginBottom: 4}} onClick={() => openAddress(goodInfo?.winner as string)}>
+                                大赢家: {goodInfo?.winner}  <LinkIcon style={{paddingTop: 4.5}} />
                             </div>
                             <div className={styles.text16} style={{marginBottom: 4}}>
                                 奖金: {goodInfo?.goodValue} WISH
@@ -263,8 +266,8 @@ const Detail: NextPage = () => {
                             <div className={styles.text16} style={{marginBottom: 4}}>
                                 返还金额（每票）: {goodInfo?.paybackFee}
                             </div>
-                            <div className={styles.text16} style={{marginBottom: 4}}>
-                                开奖时间(开奖block): {formatTime(goodInfo?.winnerTime)}  ({goodInfo?.winnerBlock})
+                            <div className={styles.text16} style={{marginBottom: 4}} onClick={() => openBlock(goodInfo?.winnerBlock)}>
+                                开奖时间(开奖block): {formatTime(goodInfo?.winnerTime)}  ({goodInfo?.winnerBlock})  <LinkIcon style={{paddingTop: 4.5}} />
                             </div>
                         </Pane>}
                         {goodStatus !== GoodStatus.SUCCESS && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
@@ -299,9 +302,9 @@ const Detail: NextPage = () => {
                             </i>
                         </div>
                         {wallet.account && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
-                            <div className={styles.text16}>已拥有抽奖码</div>
+                            <div className={styles.text16}>已拥有抽奖码 {userTickets.length > 100 ? '(只展示前100)' : ''}</div>
                             <Pane display={"flex"} flexWrap={"wrap"} gap={8}>
-                                {userTickets.map(ticket => <div key={ticket} className={styles.text14}>{getTicket(goodInfo?.goodId, ticket)}</div>)}
+                                {userTickets.slice(0, 100).map(ticket => <div key={ticket} className={styles.text14}>{getTicket(goodInfo?.goodId, ticket)}</div>)}
                             </Pane>
                         </Pane>}
                     </Pane>

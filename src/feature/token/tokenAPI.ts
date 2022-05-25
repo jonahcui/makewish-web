@@ -7,3 +7,12 @@ export async function getUserBalance(account: string) {
     }
     return await tokenContract.methods.balanceOf(account).call();
 }
+
+export async function getTotalSupply() {
+    const tokenContract = await getTokenContract();
+    if (!tokenContract) {
+        return null
+    }
+    return await tokenContract.methods.totalSupply().call();
+}
+

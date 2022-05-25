@@ -28,7 +28,7 @@ export function getIPFS(): IPFSHTTPClient | null {
     let ipfs: IPFSHTTPClient | undefined;
     try {
         ipfs = create({
-            url: "http://127.0.0.1:5001/api/v0",
+            url: process.env.NEXT_PUBLIC_IPFS_API,
 
         });
         console.log(ipfs)
@@ -59,24 +59,17 @@ export async function readJSONFromIPFS(path: string)  {
     return JSON.parse(jsonString);
 }
 
-export async function readImageFromIPFS(path: string)  {
-    const ipfs = getIPFS();
-    if (!ipfs) {
-        return null
+export function openIPFSImage(path: string) {
+    if (!path) {
+        return "/wish.png";
     }
-    const i = (await getIPFS() as IPFSHTTPClient).cat(path, {offset: 0})
-    let result = "";
-    const decoder = new TextDecoder();
-    for await (const x of ipfs.get(path)) {
-        result += decoder.decode(x);
-    }
-    return result;
+    return process.env.NEXT_PUBLIC_IPFS_HOST + path
 }
 
 export function getWeb3(): Web3 {
     if (typeof window === 'undefined' || !window.web3) {
         const provider = new Web3.providers.HttpProvider(
-            "HTTP://127.0.0.1:7545"
+            process.env.NEXT_PUBLIC_ETH_RPC_URL as string
         );
         return new Web3(provider);
     }
@@ -84,7 +77,7 @@ export function getWeb3(): Web3 {
         return window.web3
     }
     const provider = new Web3.providers.HttpProvider(
-        "HTTP://127.0.0.1:7545"
+        process.env.NEXT_PUBLIC_ETH_RPC_URL as string
     );
     const web3 = new Web3(provider);
     if (typeof window !== 'undefined') {

@@ -4,7 +4,7 @@ export interface GoodInfo {
     goodId: number
     goodValue: number
     publishTime: number
-    lockedTime: number
+    lockedTime: string
     maintenanceFee: number
     joinedUsers: number
     ticketCounts: number

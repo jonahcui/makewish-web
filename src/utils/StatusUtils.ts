@@ -22,7 +22,7 @@ export function getGoodStatus(goodInfo: GoodInfo) {
     if (new Date().getTime()/ 1000 > parseInt(String(goodInfo.lockedTime)) ) {
         return GoodStatus.LOCKED;
     }
-    if (new Date().getTime()/ 1000 < parseInt(String(goodInfo.publishTime)) ) {
+    if (new Date().getTime()/ 1000 < parseInt(String(goodInfo.publishTime)) + 60 ) {
         return GoodStatus.UN_START;
     }
     return GoodStatus.IN_PROGRESS;

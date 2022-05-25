@@ -3,9 +3,11 @@ import {useAppSelector} from "../app/hooks";
 import {selectWallet} from "../feature/wallet/walletSlice";
 import {getUserHistory, UserHistory} from "../feature/goods/goodsAPI";
 import React, {useEffect, useState} from "react";
-import {LinkIcon, Pane, Table} from "evergreen-ui";
+import {LinkIcon, Pane, Table, TagIcon, Text} from "evergreen-ui";
 import styles from "../styles/History.module.scss"
 import {formatTime} from "../utils/time";
+import {openBlock} from "../utils/explore";
+import {useRouter} from "next/router";
 
 
 const History: NextPage = () => {
@@ -19,12 +21,13 @@ const History: NextPage = () => {
         }
         const histories = await getUserHistory(wallet.account as string);
         console.log(histories)
-        setHistories(histories);
+        setHistories(histories.filter(h => h.user.indexOf("0x0000000000000000")  < 0));
     }
 
     useEffect(() => {
         loadHistory()
     }, [wallet.account]);
+    const router = useRouter();
 
 
     return <main className={styles.main}>
@@ -39,24 +42,29 @@ const History: NextPage = () => {
                         <Table.TextCell className={styles.headCell} flexBasis={100}>商品</Table.TextCell>
                         <Table.TextCell className={styles.headCell} flexBasis={100}>认购份额</Table.TextCell>
                         <Table.TextCell className={styles.headCell} flexBasis={500} flexShrink={0} flexGrow={0}>首次交易hash</Table.TextCell>
-                        <Table.TextCell className={styles.headCell} flexBasis={300}>首次认购时间</Table.TextCell>
+                        <Table.TextCell className={styles.headCell} flexBasis={300}>首次认购Block</Table.TextCell>
                         <Table.TextCell className={styles.headCell} flexBasis={200}>认购金额</Table.TextCell>
-                        <Table.TextCell className={styles.headCell} flexBasis={50}>{' '}</Table.TextCell>
+                        <Table.TextCell className={styles.headCell} flexBasis={80}>{' '}</Table.TextCell>
                     </Table.Head>
                     <Table.Body style={{backgroundColor: "black"}}>
                         {/*{goodInfo && renderTableRows()}*/}
                         {/*{userRecords.map(userRecord => <UserRow key={userRecord.user} record={userRecord} />)}*/}
                         {histories.map((history,index) => {
                             return <Table.Row className={styles.rankTableHead} style={{backgroundColor: "black"}}>
-                                <Table.TextCell className={styles.dataCell} flexBasis={100}>{history.goodId}</Table.TextCell>
+                                <Table.TextCell className={styles.dataCell} flexBasis={100}
+                                                style={{cursor: "pointer"}}
+                                                onClick={() => router.push(`/goods/` + history.goodIndex)}>{history.goodId}</Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={100}>{history.count}</Table.TextCell>
-                                <Table.TextCell className={styles.dataCell} flexBasis={500}>
+                                <Table.TextCell className={styles.dataCell} flexBasis={500}
+                                                style={{cursor: "pointer"}}
+                                                onClick={() => openBlock(history.joinBlockNum)}>
                                     {history.joinBlockNum}
                                     <LinkIcon style={{marginLeft: 10}} />
                                 </Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={300}>{formatTime(history.joinTime)}</Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={200}>{history.count} WISH</Table.TextCell>
-                                <Table.TextCell className={styles.dataCell} flexBasis={50}>
+                                <Table.TextCell className={styles.dataCell} flexBasis={80} >
+                                    {history.isWinner ? <span style={{backgroundColor: "#E49800", paddingLeft: 10, paddingRight: 10, fontWeight: "bold"}}>WIN</span> : ''}
                                 </Table.TextCell>
                             </Table.Row>
                         })}

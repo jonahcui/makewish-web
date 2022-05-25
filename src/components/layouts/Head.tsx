@@ -6,6 +6,7 @@ import styles from './Head.module.scss'
 import {useAppDispatch} from '../../app/hooks'
 import Wallet from "./Wallet";
 import PublishGood from "./PublishGood";
+import UserCenter from "./UserCenter";
 
 interface Props {}
 
@@ -53,6 +54,7 @@ const Head: React.FC<Props> = () => {
                         历史参与
                     </EvergreenLink>
                 </Link>
+                <UserCenter />
                 <Wallet />
                 <PublishGood />
             </Pane>

@@ -6,7 +6,7 @@ import Link from "next/link";
 import Web3 from "web3";
 import {AbiItem} from "web3-utils";
 import WishApi from "../../contracts/WishApi.json";
-import {getApiContract, getWeb3} from "../../utils/Web3Request";
+import {getWeb3} from "../../utils/Web3Request";
 import GoodCard from "../../components/GoodCard";
 import wallet from "../../components/layouts/Wallet";
 import {useAppSelector} from "../../app/hooks";
@@ -23,10 +23,9 @@ const List: NextPage = () => {
         if (typeof window === 'undefined') {
             return
         }
-        const instance = await getApiContract();
-        if (!instance) {
-            return;
-        }
+        const provider = new Web3.providers.HttpProvider(networkAddress);
+        const web3 = new Web3(provider);
+        const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], apiContractAddress);
         const length = await instance.methods.getGoodsLength().call();
         // @ts-ignore
         setApiContract(instance)

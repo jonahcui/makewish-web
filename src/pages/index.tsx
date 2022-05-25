@@ -5,20 +5,29 @@ import React, {useEffect, useState} from "react";
 import LogoDivider from "../components/LogoDivider";
 import Link from "next/link";
 import {formatTime} from "../utils/time";
-import {getWinnerHistory} from "../feature/goods/goodsAPI";
+import Web3 from "web3";
+import WishApi from "../contracts/WishApi.json";
+import {AbiItem} from "web3-utils";
+import {useAppSelector} from "../app/hooks";
+import {selectWallet} from "../feature/wallet/walletSlice";
+import {openAddress, openBlock} from "../utils/explore";
+import user from "./user";
 
 const Home: NextPage = () => {
     const [ranks, setRanks] = useState<Array<any>>([]);
+    const {configuration: {networkAddress, mainContractAddress, apiContractAddress}} = useAppSelector(selectWallet)
 
     const loadHistory = async () => {
-        const histories = await getWinnerHistory();
-        console.log(histories)
-        setRanks(histories);
+        const provider = new Web3.providers.HttpProvider(networkAddress);
+        const web3 = new Web3(provider);
+        const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], apiContractAddress);
+        const histories =  await instance.methods.getWinnerHistory().call();
+        setRanks(histories.filter(h => h.user.indexOf("0x0000000000000000") < 0));
     }
 
     useEffect(() => {
         loadHistory()
-    }, []);
+    }, [networkAddress]);
 
 
   return (
@@ -51,7 +60,7 @@ const Home: NextPage = () => {
                           <Table.TextCell className={styles.headCell} flexBasis={50}>
                               {' '} 商品
                           </Table.TextCell>
-                          <Table.TextCell className={styles.headCell} flexBasis={400} flexShrink={0} flexGrow={0}>
+                          <Table.TextCell className={styles.headCell} flexBasis={500} flexShrink={0} flexGrow={0}>
                               地址
                           </Table.TextCell>
                           <Table.TextCell className={styles.headCell} flexBasis={100}>参与次数</Table.TextCell>
@@ -64,12 +73,13 @@ const Home: NextPage = () => {
                                   <Table.TextCell className={styles.headCell} flexBasis={50}>
                                       {rank.goodId}
                                   </Table.TextCell>
-                                  <Table.TextCell className={styles.headCell} flexBasis={500}  flexShrink={0} flexGrow={0}>
+                                  <Table.TextCell className={styles.headCell} flexBasis={500}  flexShrink={0} flexGrow={0} onClick={() => openAddress(rank.user)}>
                                       {rank.user}
                                       <LinkIcon />
                                   </Table.TextCell>
-                                  <Table.TextCell className={styles.headCell} flexBasis={200}>{rank.count}</Table.TextCell>
-                                  <Table.TextCell className={styles.headCell} flexBasis={200}>{formatTime(rank.blockTime)}</Table.TextCell>
+                                  <Table.TextCell className={styles.headCell} flexBasis={100}>{rank.count}</Table.TextCell>
+                                  <Table.TextCell className={styles.headCell} flexBasis={200} onClick={() => openBlock(rank.blockNum)}
+                                  >{formatTime(rank.blockTime)}</Table.TextCell>
                                   <Table.TextCell className={styles.headCell} flexBasis={200}>{rank.goodValue} WISH</Table.TextCell>
                               </Table.Row>
                           })}

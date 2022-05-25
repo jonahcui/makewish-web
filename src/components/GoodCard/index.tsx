@@ -1,11 +1,11 @@
-import {Badge, Button, Card, majorScale, Nudge, Pane, Spinner} from "evergreen-ui";
+import {Badge, Button, Card, majorScale, Pane, Spinner} from "evergreen-ui";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import styles from "./GoodCard.module.scss"
-import {getIPFS, readJSONFromIPFS} from "../../utils/Web3Request";
-import {CID} from "ipfs-http-client";
+import {openIPFSImage} from "../../utils/Web3Request";
 import Web3 from "web3";
 import {getGoodInfo, GoodInfo} from "../../feature/goods/goodsAPI";
+import {getGoodStatus, GoodStatus} from "../../utils/StatusUtils";
 
 interface Props {
     web3: Web3
@@ -34,13 +34,14 @@ const GoodCard = ({web3, index} : Props) => {
         if (!goodInfo) {
             return <div />
         }
-        if (goodInfo.winner !== null && goodInfo.winner.indexOf("0x0000000000000000")  < 0) {
+        const status = getGoodStatus(goodInfo);
+        if (status === GoodStatus.SUCCESS) {
             return <Badge color="neutral" className={styles.statusTag}>已开奖</Badge>
         }
-        if (new Date().getTime()/ 1000 > parseInt(String(goodInfo.lockedTime)) ) {
+        if (status === GoodStatus.LOCKED ) {
             return <Badge color="red" className={styles.statusTag}>已锁定</Badge>
         }
-        if (new Date().getTime()/ 1000 < parseInt(String(goodInfo.publishTime)) ) {
+        if (status === GoodStatus.UN_START) {
             return <Badge color="teal" className={styles.statusTag}>未开始</Badge>
         }
         return <Badge color="green" className={styles.statusTag}>进行中</Badge>
@@ -54,7 +55,7 @@ const GoodCard = ({web3, index} : Props) => {
     }
     return <Card className={styles.card} style={{marginRight: majorScale(2)}}>
         {_getTag()}
-        <Pane is={"img"} src={"/wish2.png"} width={255} height={255} />
+        <Pane is={"img"} src={openIPFSImage(goodInfo?.fileHash)} width={255} height={255} />
         <div className={styles.goodName}>{goodInfo?.goodId} -- {goodInfo?.goodName}</div>
         <div className={styles.goodId}>{goodInfo?.goodInfo}</div>
         <div className={styles.divider}></div>
