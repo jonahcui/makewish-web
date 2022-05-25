@@ -15,19 +15,18 @@ import user from "./user";
 
 const Home: NextPage = () => {
     const [ranks, setRanks] = useState<Array<any>>([]);
-    const {configuration: {networkAddress, mainContractAddress, apiContractAddress}} = useAppSelector(selectWallet)
 
     const loadHistory = async () => {
-        const provider = new Web3.providers.HttpProvider(networkAddress);
+        const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
         const web3 = new Web3(provider);
-        const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], apiContractAddress);
+        const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_API as string);
         const histories =  await instance.methods.getWinnerHistory().call();
         setRanks(histories.filter((h: any) => h.user.indexOf("0x0000000000000000") < 0));
     }
 
     useEffect(() => {
         loadHistory()
-    }, [networkAddress, loadHistory]);
+    }, []);
 
 
   return (

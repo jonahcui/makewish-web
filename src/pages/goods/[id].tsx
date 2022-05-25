@@ -183,7 +183,7 @@ const Detail: NextPage = () => {
 
     useEffect(() => {
         loadGoodInfo()
-    }, [router, id, loadGoodInfo]);
+    }, [router, id]);
 
 
     const onMaxCount = () => {

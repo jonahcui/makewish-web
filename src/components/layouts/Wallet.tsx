@@ -53,7 +53,7 @@ function Wallet() {
 
     const onClick = () => {
         if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-            if (wallet.status === 'CONNECTED' && wallet.chainId != wallet.configuration.chainId) {
+            if (wallet.status === 'CONNECTED' && wallet.chainId != process.env.NEXT_PUBLIC_WEB3_CHAIN_ID) {
                 MetamaskAPI.requestPermission()
             } else if (wallet.status === 'CONNECTED') {
                 //TODO: open account
@@ -77,7 +77,7 @@ function Wallet() {
         }
     };
     const renderConnectedComponent = (wallet: WalletState) => {
-        if (wallet.chainId == wallet.configuration.chainId) {
+        if (wallet.chainId == process.env.NEXT_PUBLIC_WEB3_CHAIN_ID) {
             return maskAccount(wallet.account) + ' (chain: ' + wallet.chainId +')'
         }
 
@@ -87,8 +87,9 @@ function Wallet() {
     }
 
     const changeChainId = async () => {
-        await MetamaskAPI.addNetwork(wallet);
-        await MetamaskAPI.switchChain(wallet);
+        await MetamaskAPI.addChain();
+        await MetamaskAPI.addNetwork();
+        await MetamaskAPI.switchChain();
     }
     const toolTip = useCallback(() => {
         if (wallet.status === 'NOT_INSTALLED') {
@@ -105,29 +106,25 @@ function Wallet() {
                 </Pane>
             </CornerDialog>
         }
-        if(wallet.status === 'CONNECTED' && wallet.chainId != wallet.configuration.chainId) {
+        if(wallet.status === 'CONNECTED' && wallet.chainId != process.env.NEXT_PUBLIC_WEB3_CHAIN_ID) {
             return <CornerDialog
                 title="不支持的网络"
-                isShown={wallet.status === 'CONNECTED' && wallet.chainId != wallet.configuration.chainId}
+                isShown={wallet.status === 'CONNECTED' && wallet.chainId != process.env.NEXT_PUBLIC_WEB3_CHAIN_ID}
                 cancelLabel={"不切换"}
                 confirmLabel={"切换网络"}
                 onConfirm={changeChainId}
             >
                 <Pane>
                     <Text>
-                        MAKEWISH目前不支持该网络({wallet.chainId})，请切换到{wallet.configuration.chainId}.
+                        MAKEWISH目前不支持该网络({wallet.chainId})，请切换到{process.env.NEXT_PUBLIC_WEB3_CHAIN_ID}. 由于使用http方式部署， 切换网络可能会被拦截，请手动添加:
+                    </Text>
+                    <Pane marginTop={majorScale(2)}></Pane>
+                    <Text marginTop={majorScale(2)}>
+                        RPC地址为：{process.env.NEXT_PUBLIC_ETH_RPC_URL}
                     </Text>
                     <br/>
                     <Text>
-                        您也可以手动添加该网络到您的钱包
-                    </Text>
-                    <br/>
-                    <Text>
-                        RPC地址为：{wallet.configuration.networkAddress}
-                    </Text>
-                    <br/>
-                    <Text>
-                        networkId: {wallet.configuration.networkId}
+                        networkId: {process.env.NEXT_PUBLIC_WEB3_NETWORK_ID}
                     </Text>
                 </Pane>
             </CornerDialog>

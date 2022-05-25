@@ -42,9 +42,9 @@ const UserCenter = () => {
     const loadBalance = async () => {
        const totalSupply = await getTotalSupply();
        setTotalSupply(new BigNumber(totalSupply));
-        const provider = new Web3.providers.HttpProvider(wallet.configuration.networkAddress as string);
+        const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
         const web3 = new Web3(provider);
-        const contractBalance = await web3.eth.getBalance(wallet.configuration.mainContractAddress);
+        const contractBalance = await web3.eth.getBalance(process.env.NEXT_PUBLIC_CONTRACT_MAIN as string);
 
         setContractEth(new BigNumber(contractBalance));
         setExchangeRate(new BigNumber(contractBalance).div(new BigNumber(totalSupply)));
@@ -61,7 +61,7 @@ const UserCenter = () => {
 
     useEffect(() => {
         loadBalance()
-    }, [wallet, loadBalance])
+    }, [wallet])
 
     return <React.Fragment>
         <SideSheet isShown={isShown} onCloseComplete={() => setIsShown(false)}>

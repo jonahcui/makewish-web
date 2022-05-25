@@ -35,17 +35,17 @@ async  function requestPermission(): Promise<void> {
         }]})
 }
 
-async function addNetwork(wallet: WalletState): Promise<EthereumResponse> {
+async function addChain(): Promise<EthereumResponse> {
     try {
         const result = await  window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [
                 {
 
-                    "chainId": wallet.configuration.chainId,
-                    "chainName": wallet.configuration.networkName,
+                    "chainId": process.env.NEXT_PUBLIC_WEB3_CHAIN_ID,
+                    "chainName": "WISH Network",
                     "rpcUrls": [
-                        wallet.configuration.networkAddress
+                        process.env.NEXT_PUBLIC_ETH_RPC_URL
                     ],
                     "iconUrls": [
                         "https://xdaichain.com/fake/example/url/xdai.svg",
@@ -67,12 +67,44 @@ async function addNetwork(wallet: WalletState): Promise<EthereumResponse> {
     }
 }
 
-async function switchChain(wallet: WalletState): Promise<EthereumResponse> {
+async function addNetwork(): Promise<EthereumResponse> {
+    try {
+        const result = await  window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+                {
+
+                    "chainId": process.env.NEXT_PUBLIC_WEB3_CHAIN_ID,
+                    "chainName": "WISH Network",
+                    "rpcUrls": [
+                       process.env.NEXT_PUBLIC_ETH_RPC_URL
+                    ],
+                    "iconUrls": [
+                        "https://xdaichain.com/fake/example/url/xdai.svg",
+                    ],
+                    "nativeCurrency": {
+                        "name": "ETH",
+                        "symbol": "ETH",
+                        "decimals": 18
+                    },
+                }]
+        })
+        return {
+            result,
+        }
+    } catch (e) {
+        return {
+            error: e
+        };
+    }
+}
+
+async function switchChain(): Promise<EthereumResponse> {
     try {
         const permissions = await window.ethereum.request({
             method: "wallet_switchEthereumChain",
             params: [{
-                chainId: wallet.configuration.chainId,
+                chainId: process.env.NEXT_PUBLIC_WEB3_CHAIN_ID,
             }]
         });
         return {result: permissions}
@@ -89,16 +121,17 @@ async function addAssert(wallet: WalletState): Promise<EthereumResponse> {
         params:{
             "type": "ERC20",
             "options": {
-                "address": wallet.configuration.tokenAddress,
+                "address": process.env.NEXT_PUBLIC_CONTRACT_TOKEN,
                 "symbol": "WISH",
                 "decimals": 18,
-                "image": wallet.configuration.tokenImage || (window.location.host + 'wish-coin.png')
+                "image": process.env.NEXT_PUBLIC_TOKEN_IMAGE
             }
         }
     })
 }
 
 export default {
+    addChain,
     addNetwork,
     switchChain,
     requestAccount,

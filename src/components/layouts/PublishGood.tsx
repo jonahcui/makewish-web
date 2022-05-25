@@ -11,7 +11,7 @@ import {
 } from "evergreen-ui";
 import {create, IPFSHTTPClient} from "ipfs-http-client";
 import {useAppSelector} from "../../app/hooks";
-import {selectWallet} from "../../feature/wallet/walletSlice";
+import {selectIsOwner, selectWallet} from "../../feature/wallet/walletSlice";
 import Web3 from "web3";
 import {AbiItem} from "web3-utils";
 import GoodLottery from "../../contracts/GoodLottery.json"
@@ -21,6 +21,7 @@ import {deployComptroller, deployWishApi} from "../../utils/Web3Request";
 
 const PublishGood: React.FC<{}> = () => {
     const wallet = useAppSelector(selectWallet);
+    const isOwner = useAppSelector(selectIsOwner);
     const [isShown, setIsShown] = useState(false);
     const [ipfs, setIpfs] = useState<IPFSHTTPClient | undefined>();
 
@@ -94,8 +95,8 @@ const PublishGood: React.FC<{}> = () => {
         const web3 = new Web3(window.ethereum);
         const instance = new web3.eth.Contract(GoodLottery.abi as AbiItem[]);
         const params = [
-            wallet.configuration.mainContractAddress,
-            wallet.configuration.tokenAddress,
+            process.env.NEXT_PUBLIC_CONTRACT_MAIN,
+            process.env.NEXT_PUBLIC_CONTRACT_TOKEN,
             parseInt(String(goodId)),
             parseInt(String(goodValue)),
             parseInt(String(maintenanceFee)),
@@ -119,7 +120,7 @@ const PublishGood: React.FC<{}> = () => {
             toaster.danger("合约创建失败")
             return;
         }
-        const mainContract = new web3.eth.Contract(Comptroller.abi as AbiItem[], wallet.configuration.mainContractAddress)
+        const mainContract = new web3.eth.Contract(Comptroller.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_MAIN)
         const publishResult = await mainContract.methods.publishGood([response.options.address])
             .send({from: wallet.account, gas: 4712388, gasPrice: '20000000000',});
         console.log("发布商品成功：", publishResult.transactionHash);
@@ -127,6 +128,7 @@ const PublishGood: React.FC<{}> = () => {
 
     },[goodName, goodId, goodValue, maintenanceFee, goodInfo, fileHash, wallet])
 
+    console.log(wallet.account,  process.env.NEXT_PUBLIC_OWNER_ADDRESS, wallet.account === process.env.NEXT_PUBLIC_OWNER_ADDRESS + '')
     useEffect(() => {
         let ipfs: IPFSHTTPClient | undefined;
         try {
@@ -238,7 +240,7 @@ const PublishGood: React.FC<{}> = () => {
                 values={files}
             />
         </Dialog>
-        {wallet.account === wallet.configuration.ownerAddress && <Pane>
+        {wallet.account === process.env.NEXT_PUBLIC_OWNER_ADDRESS && <Pane>
             <EvergreenLink color={undefined} marginRight={majorScale(3)} onClick={() => setIsShown(true)}>
                 发布商品
             </EvergreenLink>

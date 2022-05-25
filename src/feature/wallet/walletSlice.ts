@@ -4,22 +4,10 @@ import type { AppState } from '../../app/store'
 import {connectWallet, getConfiguration} from './walletAPI'
 
 type ConnectStatus = 'NOT_INSTALLED' | 'INSTALLED' | 'CONNECTED';
-export interface WalletNetworkConfiguration {
-    networkAddress: string
-    networkName: string
-    chainId: string
-    networkId: number
-    tokenAddress: string
-    tokenImage?: string
-    mainContractAddress: string
-    apiContractAddress: string
-    ownerAddress: string
-}
 
 export interface WalletState {
     account?: string
     status: ConnectStatus
-    configuration: WalletNetworkConfiguration
     networkAddress?: string
     networkName?: string
     chainId?: string
@@ -29,18 +17,6 @@ export interface WalletState {
 const initialState: WalletState = {
     status: 'NOT_INSTALLED',
     isOwner: false,
-    configuration: {
-        networkAddress: 'http://10.211.55.5:7505',
-        networkName: "Wish Local Network",
-        networkId: 5777,
-        chainId: '0x1691',
-
-        ownerAddress: "0x511eb3624c750a11465799fc143cfc26232560f9",
-        "apiContractAddress":"0x0d5aE1DFcb38Aa107D72830EE8806b81a58f65a5",
-        "mainContractAddress":"0xF0236aD76649d17aA263f64618e9Bf2410d057FE",
-        "tokenAddress":"0x79ab92e27456332456155f97893B81FE4032A6e0",
-
-    }
 }
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -94,7 +70,7 @@ export const {setAccount, setStatus, setChainId} = walletSlice.actions
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectWallet = (state: AppState) => state.wallet
-export const selectIsOwner = (state: AppState) => (state.wallet.account === state.wallet.configuration.ownerAddress)
+export const selectIsOwner = (state: AppState) => (state.wallet.account === process.env.NEXT_PUBLIC_OWNER_ADDRESS)
 
 
 

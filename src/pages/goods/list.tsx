@@ -1,19 +1,13 @@
 import type {NextPage} from 'next'
-import styles from '../../styles/goods/GoodsList.module.scss'
-import {Button, Card, Pane,} from "evergreen-ui";
+import {Pane,} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
-import Link from "next/link";
 import Web3 from "web3";
 import {AbiItem} from "web3-utils";
 import WishApi from "../../contracts/WishApi.json";
-import {getWeb3} from "../../utils/Web3Request";
 import GoodCard from "../../components/GoodCard";
 import wallet from "../../components/layouts/Wallet";
-import {useAppSelector} from "../../app/hooks";
-import {selectWallet} from "../../feature/wallet/walletSlice";
 
 const List: NextPage = () => {
-    const {configuration: {networkAddress, mainContractAddress, apiContractAddress}} = useAppSelector(selectWallet)
     const [web3, setWeb3] = useState<Web3>()
     const [apiContract, setApiContract] = useState()
     const [totalRecords, setTotalRecords] = useState<number>(0);
@@ -23,9 +17,9 @@ const List: NextPage = () => {
         if (typeof window === 'undefined') {
             return
         }
-        const provider = new Web3.providers.HttpProvider(networkAddress);
+        const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
         const web3 = new Web3(provider);
-        const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], apiContractAddress);
+        const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_API);
         const length = await instance.methods.getGoodsLength().call();
         // @ts-ignore
         setApiContract(instance)
@@ -35,7 +29,7 @@ const List: NextPage = () => {
 
     useEffect(() => {
         loadGoods()
-    }, [wallet, loadGoods]);
+    }, [wallet]);
 
     if (typeof window === 'undefined') {
         return <div />

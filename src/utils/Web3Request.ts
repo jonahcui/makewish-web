@@ -9,16 +9,19 @@ import Comptroller from "../contracts/Comptroller.json";
 import GoodLottery from "../contracts/GoodLottery.json";
 
 
-export function getMainContract(wallet: WalletState) {
-    if(!window.web3) {
-        window.web3 = new Web3(window.ethereum);
+export function getReadableWeb3() {
+    if (typeof window === 'undefined') {
+        return null;
     }
-    console.log(window.web3)
-
-    return new window.web3.eth.Contract(
-        Comptroller.abi as AbiItem[],
-        wallet.configuration.mainContractAddress
-    );
+    if (typeof window === 'undefined' && window.web3) {
+        return window.web3;
+    }
+    const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
+    const web3 = new Web3(provider);
+    if (typeof window !== 'undefined') {
+        window.web3 = web3;
+    }
+    return web3;
 }
 
 export function getIPFS(): IPFSHTTPClient | null {
@@ -90,10 +93,12 @@ export async function getApiContract() {
     if (!store.getState().wallet) {
         return null;
     }
-    const provider = new Web3.providers.HttpProvider(store.getState().wallet.configuration.networkAddress as string);
-    const web3 = new Web3(provider);
-    const apiAddress  = store.getState().wallet.configuration.apiContractAddress;
-    return new web3.eth.Contract(WishApi.abi as AbiItem[], apiAddress);
+    const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
+    const web3 = getReadableWeb3();
+    if (!web3) {
+        return null;
+    }
+    return new web3.eth.Contract(WishApi.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_API);
 }
 
 export async function getTokenContract() {
@@ -101,8 +106,7 @@ export async function getTokenContract() {
         return null;
     }
     const web3 = new Web3(window.ethereum);
-    const tokenAddress  = store.getState().wallet.configuration.tokenAddress;
-    return new web3.eth.Contract(WishToken.abi as AbiItem[], tokenAddress);
+    return new web3.eth.Contract(WishToken.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_TOKEN);
 }
 
 export async function getGoodContract(address: string) {
@@ -118,8 +122,7 @@ export async function getComptrollerContract() {
         return null;
     }
     const web3 = new Web3(window.ethereum);
-    const mainContractAddress  = store.getState().wallet.configuration.mainContractAddress;
-    return new web3.eth.Contract(Comptroller.abi as AbiItem[], mainContractAddress);
+    return new web3.eth.Contract(Comptroller.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_MAIN);
 }
 
 

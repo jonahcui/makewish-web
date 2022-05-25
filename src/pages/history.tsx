@@ -26,7 +26,7 @@ const History: NextPage = () => {
 
     useEffect(() => {
         loadHistory()
-    }, [wallet.account, loadHistory]);
+    }, [wallet.account]);
     const router = useRouter();
 
 
