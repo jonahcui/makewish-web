@@ -13,7 +13,9 @@ export function getReadableWeb3() {
     if (typeof window === 'undefined') {
         return null;
     }
+    // @ts-ignore
     if (typeof window === 'undefined' && window.web3) {
+        // @ts-ignore
         return window.web3;
     }
     const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
