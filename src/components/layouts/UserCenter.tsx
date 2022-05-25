@@ -61,7 +61,7 @@ const UserCenter = () => {
 
     useEffect(() => {
         loadBalance()
-    }, [wallet])
+    }, [wallet, loadBalance])
 
     return <React.Fragment>
         <SideSheet isShown={isShown} onCloseComplete={() => setIsShown(false)}>

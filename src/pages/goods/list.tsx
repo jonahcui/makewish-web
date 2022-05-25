@@ -35,7 +35,7 @@ const List: NextPage = () => {
 
     useEffect(() => {
         loadGoods()
-    }, [wallet]);
+    }, [wallet, loadGoods]);
 
     if (typeof window === 'undefined') {
         return <div />

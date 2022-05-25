@@ -28,7 +28,7 @@ const GoodCard = ({web3, index} : Props) => {
 
     useEffect(() => {
         loadGoodInfo()
-    }, [web3]);
+    }, [web3, loadGoodInfo]);
 
     const _getTag = () => {
         if (!goodInfo) {

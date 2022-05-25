@@ -131,7 +131,7 @@ const PublishGood: React.FC<{}> = () => {
         let ipfs: IPFSHTTPClient | undefined;
         try {
             ipfs = create({
-                url: "http://127.0.0.1:5001/api/v0",
+                url: process.env.NEXT_PUBLIC_IPFS_API,
 
             });
             console.log(ipfs)
@@ -141,16 +141,6 @@ const PublishGood: React.FC<{}> = () => {
             setIpfs(undefined)
         }
     }, []);
-
-    const deployContract = async () => {
-        console.log("start deploy contract")
-        const comptrollerAddress = await deployComptroller();
-        console.log("end deploy comptroller")
-        const wishApi = await deployWishApi(comptrollerAddress?.mainContractAddress as string);
-        console.log("end deploy contract", {...comptrollerAddress, apiContractAddress: wishApi})
-
-    }
-
 
     return <Pane>
         <Dialog

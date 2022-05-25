@@ -26,7 +26,7 @@ const History: NextPage = () => {
 
     useEffect(() => {
         loadHistory()
-    }, [wallet.account]);
+    }, [wallet.account, loadHistory]);
     const router = useRouter();
 
 
@@ -50,7 +50,7 @@ const History: NextPage = () => {
                         {/*{goodInfo && renderTableRows()}*/}
                         {/*{userRecords.map(userRecord => <UserRow key={userRecord.user} record={userRecord} />)}*/}
                         {histories.map((history,index) => {
-                            return <Table.Row className={styles.rankTableHead} style={{backgroundColor: "black"}}>
+                            return <Table.Row key={history.goodId} className={styles.rankTableHead} style={{backgroundColor: "black"}}>
                                 <Table.TextCell className={styles.dataCell} flexBasis={100}
                                                 style={{cursor: "pointer"}}
                                                 onClick={() => router.push(`/goods/` + history?.goodIndex)}>{history.goodId}</Table.TextCell>

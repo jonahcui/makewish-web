@@ -27,7 +27,7 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         loadHistory()
-    }, [networkAddress]);
+    }, [networkAddress, loadHistory]);
 
 
   return (
