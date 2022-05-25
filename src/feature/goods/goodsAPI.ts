@@ -29,6 +29,16 @@ export interface UserGoodRecord {
      joinBlockHash: string;
 }
 
+export interface UserHistory {
+    goodId: number;
+    user: string;
+    count: number;
+    joined: boolean;
+    joinTime: number;
+    joinBlockNum: number;
+    isWinner: boolean;
+}
+
 
 export async function getGoodInfo(index: number) {
     const apiContract = await getApiContract();
@@ -63,3 +73,22 @@ export async function getUserTickets(index: number, account: string) {
     }
     return await  apiContract.methods.getUserTickets(index, account).call();
 }
+
+
+export async function getUserHistory(account: string): Promise<Array<UserHistory>> {
+    const apiContract = await getApiContract();
+    if (!apiContract) {
+        return []
+    }
+    return await  apiContract.methods.getUserHistory(account).call();
+}
+
+export async function getWinnerHistory(): Promise<Array<UserHistory>> {
+    const apiContract = await getApiContract();
+    if (!apiContract) {
+        return []
+    }
+    return await  apiContract.methods.getWinnerHistory().call();
+}
+
+

@@ -1,22 +1,22 @@
 import type {NextPage} from 'next'
 import styles from '../../styles/goods/GoodsDetail.module.scss'
-import {LinkIcon, Pagination, Pane, Table, TextInput, toaster} from "evergreen-ui";
+import {Button, LinkIcon, Pane, Table, TextInput, toaster} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
 import LogoDivider from "../../components/LogoDivider";
 import classNames from "classnames";
 import {getGoodInfo, getUserRecord, getUserTickets, GoodInfo, UserGoodRecord} from "../../feature/goods/goodsAPI";
 import {useRouter} from "next/router";
 import {useAppSelector} from "../../app/hooks";
-import {selectWallet} from "../../feature/wallet/walletSlice";
-import {readImageFromIPFS} from "../../utils/Web3Request";
-import moment from "moment";
+import {selectIsOwner, selectWallet} from "../../feature/wallet/walletSlice";
 import {getUserBalance} from "../../feature/token/tokenAPI";
 import BigNumber from "bignumber.js";
 import {getGoodStatus, GoodStatus} from "../../utils/StatusUtils";
 import {formatTime} from "../../utils/time";
-import {exchangeAndPurchase} from "../../feature/comptroller/comptrollerAPI";
+import {exchangeAndPurchase, pickWinner} from "../../feature/comptroller/comptrollerAPI";
 import Countdown from "react-countdown";
+import _ from 'lodash';
 
+// @ts-ignore
 const UserRow =({record}) => {
     if (!record) {
         return <React.Fragment />;
@@ -33,7 +33,7 @@ const UserRow =({record}) => {
     </Table.Row>
 }
 
-const GoodStatusTag = ({goodStatus, goodInfo} : {goodStatus: GoodStatus}) => {
+const GoodStatusTag = ({goodStatus, goodInfo, isOwner, onPickWinner} : {goodStatus: GoodStatus, goodInfo?: GoodInfo, isOwner: boolean, onPickWinner: Function}) => {
     if (goodStatus == GoodStatus.NON_GOOD) {
         return <div>{" "}</div>
     }
@@ -47,7 +47,14 @@ const GoodStatusTag = ({goodStatus, goodInfo} : {goodStatus: GoodStatus}) => {
     }
 
     if (goodStatus == GoodStatus.LOCKED) {
-        return <div className={styles.stateText}>等待开奖结果</div>
+        // @ts-ignore
+        return <div>
+            <div className={classNames(styles.stateText)}>等待开奖结果</div>
+            <div className={classNames(styles.stateText)}>
+                <Countdown date={parseInt(goodInfo?.lockedTime)  * 1000 + 10 * 60 * 1000} className={styles.stateText} />
+            </div>
+            {isOwner && <Button intent="danger" style={{width: "100%"}} onClick={onPickWinner}>开奖</Button>}
+        </div>
     }
 
     if (goodStatus == GoodStatus.IN_PROGRESS) {
@@ -66,6 +73,7 @@ const getOffset = (page: number, pageSize: number, totalRecords: number) => {
     return totalRecords - 1 - (page - 1) * pageSize;
 }
 
+// @ts-ignore
 const getTicket =(id, index) => {
     return id + ("0000000000" + index).slice(-10)
 }
@@ -73,19 +81,27 @@ const getTicket =(id, index) => {
 const getNeedEth = (balance: BigNumber, count: string) => {
     const decimal = new BigNumber(10).exponentiatedBy(18);
     const needWishToken  = new BigNumber(count).times(decimal).minus(balance.times(decimal))
+    if (needWishToken.lt(new BigNumber(0))) {
+        return "0"
+    }
     return needWishToken.div(decimal).toFormat(18)
 }
 
 const getNeedWei = (balance: BigNumber, count: string): BigNumber => {
     const decimal = new BigNumber(10).exponentiatedBy(18);
     console.log(new BigNumber(count).times(decimal).minus(balance.times(decimal)).toFormat(18))
-    return new BigNumber(count).times(decimal).minus(balance.times(decimal))
+    const needWei = new BigNumber(count).times(decimal).minus(balance.times(decimal))
+    if (needWei.lt(new BigNumber(0))) {
+        return new BigNumber(0)
+    }
+    return needWei;
 }
 
 const Detail: NextPage = () => {
     const router = useRouter()
     const {id} = router.query
     const wallet = useAppSelector(selectWallet);
+    const isOwner = useAppSelector(selectIsOwner)
 
     const [goodInfo, setGoodInfo] = useState<GoodInfo>();
     const [loadding, setLoadding] = useState<boolean>(false);
@@ -119,11 +135,16 @@ const Detail: NextPage = () => {
             totalPages: good.joinedUsers % 20 > 0 ? good.joinedUsers / 20 + 1 : good.joinedUsers
         })
 
-        await _loadUsers();
+        await _loadUsers(good, {
+            pageSize: 20,
+            current: 1,
+            totalPages: good.joinedUsers % 20 > 0 ? good.joinedUsers / 20 + 1 : good.joinedUsers
+        });
+
         await _loadTickets();
     }
 
-    const _loadUsers = async () => {
+    const _loadUsers = async (goodInfo: GoodInfo, page: any) => {
         const totalRecords = goodInfo?.joinedUsers;
         if (!totalRecords || totalRecords == 0) {
             return;
@@ -132,9 +153,11 @@ const Detail: NextPage = () => {
         const result = []
         for (let i = 0; i < page.pageSize; i++) {
             const index = offset - i;
+            console.log("index: ",index)
             if (index < 0) {
                 break;
             }
+            // @ts-ignore
             const userRecord = await getUserRecord(id, index);
             result.push(userRecord);
         }
@@ -145,6 +168,7 @@ const Detail: NextPage = () => {
         if (!wallet.account) {
             return;
         }
+        // @ts-ignore
         const userHistories = await getUserTickets(id, wallet.account);
         const userBalance = await getUserBalance(wallet.account);
         console.log(userBalance)
@@ -163,11 +187,16 @@ const Detail: NextPage = () => {
         setCount('100')
     }
 
+    // @ts-ignore
     const onCountChange = (e) => {
-        if (!BigNumber.isBigNumber(e.target.value)) {
-            setCount(1)
+        if (!_.isInteger(_.toNumber(e.target.value))) {
+            toaster.danger("请输入有效数字，必须是整数")
+            setCount('1')
+        } else if (e.target.value.indexOf(".") > -1) {
+            toaster.danger("请输入有效数字，必须是整数")
+            setCount('1')
         } else {
-            setCount(count)
+            setCount(e.target.value)
         }
     }
 
@@ -182,11 +211,22 @@ const Detail: NextPage = () => {
             const resp = await exchangeAndPurchase(wallet.account, goodInfo?.goodId, new BigNumber(count), wei);
             console.log("购买成功：", resp.txHash)
             toaster.success('商品购买成功: txHash为: ' + resp.transactionHash)
+            loadGoodInfo()
         } catch (e) {
             console.error("购买失败：", e)
             toaster.danger("购买失败: " + e);
         }
 
+    }
+
+    const onPickWinner = async () => {
+        if (!isOwner) {
+            return;
+        }
+        console.log("开奖：", [goodInfo?.goodId])
+        const resp = await pickWinner(parseInt(id as string), wallet.account as string);
+        console.log("开奖：", resp?.txHash)
+        loadGoodInfo();
     }
 
     return <div>
@@ -195,7 +235,7 @@ const Detail: NextPage = () => {
                 <Pane display={"flex"} justifyContent={"center"} marginTop={50}>
                     <Pane style={{marginRight: 20}}>
                         {goodInfo && goodInfo.fileHash && <Pane is="img" style={{width: 282, height: 282}} src={"https://ipfs.io/ipfs/QmTTQ5XpwdndHPjd9o8AKAnuTb5QQdLBPZEmjJvdPhnoz3?filename=pet.jpg"} /> }
-                        <GoodStatusTag goodStatus={goodStatus} goodInfo={goodInfo} />
+                        <GoodStatusTag goodStatus={goodStatus} goodInfo={goodInfo} isOwner={isOwner} onPickWinner={onPickWinner} />
                     </Pane>
                     <Pane marginBottom={50} width={500}>
                         <div className={styles.text26} style={{marginBottom: 8}}>{goodInfo?.goodName}</div>
@@ -232,7 +272,7 @@ const Detail: NextPage = () => {
                                 填写你的认购份额
                             </div>
                             <div className={styles.text22} style={{marginBottom: 8}}>
-                                <TextInput value={count} onChange={e => setCount(parseInt(e.target.value, 10))}  />
+                                <TextInput value={count} onChange={onCountChange}  />
                                 <span className={styles.primaryColor} style={{marginLeft: 10}} onClick={onMaxCount}>
                                 MAX
                                 </span>

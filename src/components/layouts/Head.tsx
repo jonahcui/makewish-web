@@ -48,14 +48,9 @@ const Head: React.FC<Props> = () => {
                         浏览商品
                     </EvergreenLink>
                 </Link>
-                <Link href="/foundations" passHref>
-                    <EvergreenLink color={parentPath !== 'foundations' ? 'neutral' : undefined} marginRight={majorScale(3)}>
+                <Link href="/history" passHref>
+                    <EvergreenLink color={parentPath !== '/user' ? 'neutral' : undefined} marginRight={majorScale(3)}>
                         历史参与
-                    </EvergreenLink>
-                </Link>
-                <Link href="/src/componentsents" passHref>
-                    <EvergreenLink color={parentPath !== 'components' ? 'neutral' : undefined} marginRight={majorScale(3)}>
-                        个人中心
                     </EvergreenLink>
                 </Link>
                 <Wallet />

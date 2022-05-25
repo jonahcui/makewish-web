@@ -16,11 +16,11 @@ import Web3 from "web3";
 import {AbiItem} from "web3-utils";
 import GoodLottery from "../../contracts/GoodLottery.json"
 import Comptroller from "../../contracts/Comptroller.json"
+import {deployComptroller, deployWishApi} from "../../utils/Web3Request";
 
 
 const PublishGood: React.FC<{}> = () => {
     const wallet = useAppSelector(selectWallet);
-    const [isOwner, setIsOwner] = useState(true);
     const [isShown, setIsShown] = useState(false);
     const [ipfs, setIpfs] = useState<IPFSHTTPClient | undefined>();
 
@@ -91,11 +91,7 @@ const PublishGood: React.FC<{}> = () => {
         const result = await (ipfs as IPFSHTTPClient).add(JSON.stringify(good));
         toaster.notify('商品信息上传到IPFS成功，文件hash为：' + result.path)
 
-        const provider = new Web3.providers.HttpProvider(
-            'HTTP://127.0.0.1:7545'
-        );
-
-        const web3 = new Web3(provider);
+        const web3 = new Web3(window.ethereum);
         const instance = new web3.eth.Contract(GoodLottery.abi as AbiItem[]);
         const params = [
             wallet.configuration.mainContractAddress,
@@ -145,6 +141,15 @@ const PublishGood: React.FC<{}> = () => {
             setIpfs(undefined)
         }
     }, []);
+
+    const deployContract = async () => {
+        console.log("start deploy contract")
+        const comptrollerAddress = await deployComptroller();
+        console.log("end deploy comptroller")
+        const wishApi = await deployWishApi(comptrollerAddress?.mainContractAddress as string);
+        console.log("end deploy contract", {...comptrollerAddress, apiContractAddress: wishApi})
+
+    }
 
 
     return <Pane>
@@ -243,8 +248,8 @@ const PublishGood: React.FC<{}> = () => {
                 values={files}
             />
         </Dialog>
-        {isOwner && <Pane onClick={() => setIsShown(true)}>
-            <EvergreenLink color={undefined} marginRight={majorScale(3)}>
+        {wallet.account === wallet.configuration.ownerAddress && <Pane>
+            <EvergreenLink color={undefined} marginRight={majorScale(3)} onClick={() => setIsShown(true)}>
                 发布商品
             </EvergreenLink>
         </Pane>}

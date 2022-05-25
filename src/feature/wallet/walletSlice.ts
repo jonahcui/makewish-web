@@ -13,6 +13,7 @@ export interface WalletNetworkConfiguration {
     tokenImage?: string
     mainContractAddress: string
     apiContractAddress: string
+    ownerAddress: string
 }
 
 export interface WalletState {
@@ -22,19 +23,22 @@ export interface WalletState {
     networkAddress?: string
     networkName?: string
     chainId?: string
+    isOwner: boolean
 }
 
 const initialState: WalletState = {
     status: 'NOT_INSTALLED',
+    isOwner: false,
     configuration: {
-        networkAddress: 'http://localhost:7545',
+        networkAddress: 'http://10.211.55.5:7505',
         networkName: "Wish Local Network",
         networkId: 5777,
-        chainId: '0x539',
+        chainId: '0x1691',
 
-        mainContractAddress: '0xbDdE187e79F610e0B82C4952f16Ce4dC8448E56F',
-        tokenAddress: '0xfDF3e6477cbcFBd132826320Cdb06bc4B5270a09',
-        apiContractAddress: '0x8BE423679ad26397dc969553290b5523C56192Ea'
+        "apiContractAddress":"0x90C2C05D0de75BBB5e10ee456b220Dd4A44680c9",
+        "mainContractAddress":"0x5E0563a6A0E89429A131BE3869cBc1a646652346",
+        "tokenAddress":"0x54c26fc79983f1Ad9897A53f63C0adea96B9Cb07",
+        ownerAddress: "0x511eb3624c750a11465799fc143cfc26232560f9"
     }
 }
 
@@ -89,6 +93,7 @@ export const {setAccount, setStatus, setChainId} = walletSlice.actions
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectWallet = (state: AppState) => state.wallet
+export const selectIsOwner = (state: AppState) => (state.wallet.account === state.wallet.configuration.ownerAddress)
 
 
 

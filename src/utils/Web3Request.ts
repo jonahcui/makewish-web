@@ -6,6 +6,7 @@ import store from "../app/store";
 import WishApi from "../contracts/WishApi.json";
 import WishToken from "../contracts/WishToken.json";
 import Comptroller from "../contracts/Comptroller.json";
+import GoodLottery from "../contracts/GoodLottery.json";
 
 
 export function getMainContract(wallet: WalletState) {
@@ -106,20 +107,61 @@ export async function getTokenContract() {
     if (!store.getState().wallet) {
         return null;
     }
-    const provider = new Web3.providers.HttpProvider(store.getState().wallet.configuration.networkAddress as string);
-    const web3 = new Web3(provider);
+    const web3 = new Web3(window.ethereum);
     const tokenAddress  = store.getState().wallet.configuration.tokenAddress;
     return new web3.eth.Contract(WishToken.abi as AbiItem[], tokenAddress);
+}
+
+export async function getGoodContract(address: string) {
+    if (!store.getState().wallet) {
+        return null;
+    }
+    const web3 = new Web3(window.ethereum);
+    return new web3.eth.Contract(GoodLottery.abi as AbiItem[], address);
 }
 
 export async function getComptrollerContract() {
     if (!store.getState().wallet) {
         return null;
     }
-    const provider = new Web3.providers.HttpProvider(store.getState().wallet.configuration.networkAddress as string);
-    const web3 = new Web3(provider);
+    const web3 = new Web3(window.ethereum);
     const mainContractAddress  = store.getState().wallet.configuration.mainContractAddress;
     return new web3.eth.Contract(Comptroller.abi as AbiItem[], mainContractAddress);
+}
+
+
+export async function deployComptroller() {
+    if (!store.getState().wallet) {
+        return null;
+    }
+    const web3 = new Web3(window.ethereum);
+    const instance = new web3.eth.Contract(Comptroller.abi as AbiItem[]);
+    const resp = await instance.deploy({data: Comptroller.bytecode, arguments: [1]}).send({
+        from: store.getState().wallet.account as string,
+        value: "1000000000000000000",
+        gas: 7200000
+    })
+    console.log("deploy comptroller response: ", resp);
+    console.log("deploy comptroller address: ", resp.options.address);
+    const newInstance = new web3.eth.Contract(Comptroller.abi as AbiItem[], resp.options.address);
+    const tokenAddressResp = await newInstance.methods.token().call();
+    return {mainContractAddress: resp.options.address, tokenAddress: tokenAddressResp}
+}
+
+export async function deployWishApi(comptrollerAddress: string) {
+    if (!store.getState().wallet) {
+        return null;
+    }
+    const web3 = new Web3(window.ethereum);
+    const instance = new web3.eth.Contract(WishApi.abi as AbiItem[]);
+    const resp = await instance.deploy({data: WishApi.bytecode, arguments: [comptrollerAddress]}).send({
+        from: store.getState().wallet.account as string,
+        gas: 5000000,
+        gasPrice: '1000000000'
+    })
+    console.log("deploy wish api response: ", resp);
+    console.log("deploy wish api address: ", resp.options.address);
+    return resp.options.address
 }
 
 

@@ -1,4 +1,4 @@
-import {getComptrollerContract} from "../../utils/Web3Request";
+import {getApiContract, getComptrollerContract, getGoodContract} from "../../utils/Web3Request";
 import BigNumber from "bignumber.js";
 
 export async function exchangeAndPurchase(account: string, id: number, amount: BigNumber, value: BigNumber) {
@@ -7,12 +7,32 @@ export async function exchangeAndPurchase(account: string, id: number, amount: B
         return null
     }
     console.log(comptrollerContract, id, amount.toString(), account, value.toString())
-    return await  comptrollerContract.methods.exchangeAndJoin('12', '1').send({
-        // from: account,
-        // value: value.toString(),
-        from: '0x8c28ec2f92d3cef3fa6be6d2d6f1c7d97101d07f',
-        value: '1000000000000000000',
-        gas: 120000,
+    return await  comptrollerContract.methods.exchangeAndJoin(id, amount).send({
+        from: account,
+        value: value.toString(),
+        gas: 500000,
         gasPrice: 20000000000
     });
+}
+
+export async function pickWinner(index: number, from: string) {
+    const comptrollerContract = await getComptrollerContract();
+    if (!comptrollerContract) {
+        return null
+    }
+    const address = await comptrollerContract.methods.allGoods(index).call();
+    const instance = await getGoodContract(address);
+    if (!instance) {
+        return null;
+    }
+    const resp = instance.methods.pickWinner().call({
+        from,
+        gas: 500000,
+        gasPrice: 20000000000
+    })
+    return instance.methods.pickWinner().send({
+        from,
+        gas: 1000000,
+        gasPrice: 20000000000
+    })
 }
