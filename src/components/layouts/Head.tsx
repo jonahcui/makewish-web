@@ -50,7 +50,7 @@ const Head: React.FC<Props> = () => {
                     </EvergreenLink>
                 </Link>
                 <Link href="/history" passHref>
-                    <EvergreenLink color={parentPath !== '/user' ? 'neutral' : undefined} marginRight={majorScale(3)}>
+                    <EvergreenLink color={parentPath !== 'history' ? 'neutral' : undefined} marginRight={majorScale(3)}>
                         历史参与
                     </EvergreenLink>
                 </Link>
