@@ -53,7 +53,7 @@ const GoodCard = ({web3, index} : Props) => {
     if (loadding) {
         return <Spinner className={styles.card}/>
     }
-    return <Card className={styles.card} style={{marginRight: majorScale(2)}}>
+    return <Card className={styles.card} style={{marginRight: majorScale(2), marginTop: majorScale(2)}}>
         {_getTag()}
         <Pane is={"img"} src={openIPFSImage(goodInfo?.fileHash)} width={255} height={255} />
         <div className={styles.goodName}>{goodInfo?.goodId} -- {goodInfo?.goodName}</div>
