@@ -91,7 +91,6 @@ const getNeedEth = (balance: BigNumber, count: string) => {
 
 const getNeedWei = (balance: BigNumber, count: string): BigNumber => {
     const decimal = new BigNumber(10).exponentiatedBy(18);
-    console.log(new BigNumber(count).times(decimal).minus(balance.times(decimal)).toFormat(18))
     const needWei = new BigNumber(count).times(decimal).minus(balance.times(decimal))
     if (needWei.lt(new BigNumber(0))) {
         return new BigNumber(0)
@@ -204,13 +203,13 @@ const Detail: NextPage = () => {
     }
 
     const purchase = async () => {
+        if (!wallet.account || !goodInfo?.goodId || !count) {
+            toaster.danger("请连接钱包后购买");
+            return;
+        }
+        const wei = getNeedWei(userBalance, count);
+        console.log("购买：", [wallet.account, goodInfo?.goodId, count.toString(), wei.toString(),])
         try {
-            if (!wallet.account || !goodInfo?.goodId || !count) {
-                toaster.danger("请连接钱包后购买");
-                return;
-            }
-            const wei = getNeedWei(userBalance, count);
-            console.log("购买：", [wallet.account, goodInfo?.goodId, count.toString(), wei.toString(),])
             const resp = await exchangeAndPurchase(wallet.account, goodInfo?.goodId, new BigNumber(count), wei);
             console.log("购买成功：", resp.txHash)
             toaster.success('商品购买成功: txHash为: ' + resp.transactionHash)

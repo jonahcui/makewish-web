@@ -1,5 +1,6 @@
 import {getApiContract, getComptrollerContract, getGoodContract} from "../../utils/Web3Request";
 import BigNumber from "bignumber.js";
+import BN from "bn.js";
 
 export async function exchangeAndPurchase(account: string, id: number, amount: BigNumber, value: BigNumber) {
     const comptrollerContract = await getComptrollerContract();
@@ -26,7 +27,7 @@ export async function exchangeAndPurchase(account: string, id: number, amount: B
         }
     }
     console.log(gasPrice.toPrecision())
-    return await  comptrollerContract.methods.exchangeAndJoin(id, amount).send({
+    return await  comptrollerContract.methods.exchangeAndJoin(id, new BN(amount.toPrecision())).send({
         from: account,
         value: value.toPrecision(),
         gas: gasPrice.toPrecision(),

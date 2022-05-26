@@ -32,7 +32,7 @@ const History: NextPage = () => {
 
     return <main className={styles.main}>
         <Pane display={"flex"} alignItems="center" flexDirection="column">
-            <div className={styles.title}>
+            <div className={styles.title} onClick={loadHistory}>
                 您的认购参与记录
             </div>
             <Pane marginBottom={135} width={1200}>
