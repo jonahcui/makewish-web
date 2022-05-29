@@ -1,6 +1,6 @@
 import type {NextPage} from 'next'
 import styles from '../../styles/goods/GoodsDetail.module.scss'
-import {Button, LinkIcon, Pane, Table, TextInput, toaster} from "evergreen-ui";
+import {Badge, Button, LinkIcon, Pane, Table, TextInput, toaster, Text} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
 import LogoDivider from "../../components/LogoDivider";
 import classNames from "classnames";
@@ -19,18 +19,22 @@ import {openAddress, openBlock} from "../../utils/explore";
 import {openIPFSImage} from "../../utils/Web3Request";
 
 // @ts-ignore
-const UserRow =({record}) => {
+const UserRow =({record, winner}) => {
     if (!record) {
         return <React.Fragment />;
     }
     return <Table.Row className={styles.rankTableHead} style={{backgroundColor: "black"}}>
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.user.substring(2, 8)}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.count}</Table.TextCell>
-        <Table.TextCell className={styles.dataCell} flexBasis={500} style={{cursor: "pointer"}} onClick={() => openAddress(record?.user)}>{record?.user}</Table.TextCell>
+        <Table.TextCell className={styles.dataCell} flexBasis={500} style={{cursor: "pointer"}} onClick={() => openAddress(record?.user)}>
+            <Text size={400} color={"#F1F1F1"}>
+                {record?.user}
+            </Text>
+        </Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={300}>{formatTime(record?.joinTime)}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={200} style={{cursor: "pointer"}} onClick={() => openBlock(record?.joinBlockNum)}>{record?.joinBlockNum}</Table.TextCell>
-        <Table.TextCell className={styles.dataCell} flexBasis={50}  style={{cursor: "pointer"}} onClick={() => openBlock(record?.joinBlockNum)}>
-            <LinkIcon />
+        <Table.TextCell className={styles.dataCell} flexBasis={80} onClick={() => openBlock(record?.joinBlockNum)}>
+            {record.user === winner ? <Badge color="yellow">WIN</Badge> : <div />}
         </Table.TextCell>
     </Table.Row>
 }
@@ -216,7 +220,7 @@ const Detail: NextPage = () => {
             loadGoodInfo()
         } catch (e) {
             console.error("购买失败：", e)
-            toaster.danger("购买失败: 请手动调整你的Gas");
+            toaster.danger("购买失败: " + e.message);
         }
 
     }
@@ -300,7 +304,7 @@ const Detail: NextPage = () => {
                                 每次成功参与，都将获得对应WISH代币奖励
                             </i>
                         </div>
-                        {wallet.account && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
+                        {wallet.account && userTickets.length > 0 && <Pane paddingX={46} paddingY={17} paddingBottom={30} background={"#292929"}>
                             <div className={styles.text16}>已拥有抽奖码 {userTickets.length > 100 ? '(只展示前100)' : ''}</div>
                             <Pane display={"flex"} flexWrap={"wrap"} gap={8}>
                                 {userTickets.slice(0, 100).map(ticket => <div key={ticket} className={styles.text14}>{getTicket(goodInfo?.goodId, ticket)}</div>)}
@@ -324,7 +328,7 @@ const Detail: NextPage = () => {
                         </Table.Head>
                         <Table.Body style={{backgroundColor: "black"}}>
                             {/*{goodInfo && renderTableRows()}*/}
-                            {userRecords.map(userRecord => <UserRow key={userRecord.user} record={userRecord} />)}
+                            {userRecords.map(userRecord => <UserRow key={userRecord.user} record={userRecord} winner={goodInfo?.winner} />)}
                         </Table.Body>
                     </Table.Body>
                 </Pane>

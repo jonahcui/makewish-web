@@ -56,8 +56,6 @@ function Wallet() {
             if (wallet.status === 'CONNECTED' && wallet.chainId != process.env.NEXT_PUBLIC_WEB3_CHAIN_ID) {
                 MetamaskAPI.requestPermission()
             } else if (wallet.status === 'CONNECTED') {
-                //TODO: open account
-                MetamaskAPI.addAssert(wallet)
                 return;
             }
             MetamaskAPI.requestAccount()
@@ -133,7 +131,7 @@ function Wallet() {
     }, [wallet, onClick, changeChainId])
     return (
             <div>
-                <EvergreenLink color="primary" marginRight={majorScale(3)} onClick={onClick}>
+                <EvergreenLink color={wallet.status !== "CONNECTED" ? "primary" : undefined} marginRight={majorScale(3)} onClick={onClick}>
                     {wallet.status === 'NOT_INSTALLED' && '安装数字钱包，即可体验'}
                     {wallet.status === 'INSTALLED' && '连接钱包, 赢取好礼'}
                     {wallet.status === 'CONNECTED' && renderConnectedComponent(wallet)}

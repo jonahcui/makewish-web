@@ -1,6 +1,6 @@
 import type {NextPage} from 'next'
 import styles from '../styles/Home.module.scss'
-import {ArrowRightIcon, Button, LinkIcon, Pane, Table} from "evergreen-ui";
+import {ArrowRightIcon, Button, LinkIcon, Pane, Table, Text} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
 import LogoDivider from "../components/LogoDivider";
 import Link from "next/link";
@@ -12,9 +12,11 @@ import {useAppSelector} from "../app/hooks";
 import {selectWallet} from "../feature/wallet/walletSlice";
 import {openAddress, openBlock} from "../utils/explore";
 import user from "./user";
+import {readJSONFromIPFS} from "../utils/Web3Request";
 
 const Home: NextPage = () => {
     const [ranks, setRanks] = useState<Array<any>>([]);
+    const [goodNames, setGoodNames] = useState<Record<number, string>>({});
 
     const loadHistory = async () => {
         const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
@@ -24,9 +26,36 @@ const Home: NextPage = () => {
         setRanks(histories.filter((h: any) => h.user.indexOf("0x0000000000000000") < 0));
     }
 
+    const loadGoodNames = async () => {
+        if (!ranks || ranks.length === 0) {
+            return;
+        }
+        const result: Record<number, string> = {}
+        for (let i = 0; i < ranks.length; i++) {
+            const rank = ranks[i];
+            if (rank.fileHash) {
+                try {
+                    const json = await readJSONFromIPFS(rank.fileHash);
+                    if (json.goodName) {
+                        result[json.goodId] = json.goodName;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+        }
+        setGoodNames(result);
+        return result;
+    }
+
     useEffect(() => {
         loadHistory()
     }, []);
+
+    useEffect(() => {
+        loadGoodNames();
+    }, [ranks]);
+
 
 
   return (
@@ -57,29 +86,74 @@ const Home: NextPage = () => {
                   <Table.Body className={styles.rankTable}>
                       <Table.Head className={styles.rankTableHead}>
                           <Table.TextCell className={styles.headCell} flexBasis={50}>
+                              <Text size={400} color={"#F1F1F1"}>
                               {' '} 商品
+                              </Text>
                           </Table.TextCell>
-                          <Table.TextCell className={styles.headCell} flexBasis={500} flexShrink={0} flexGrow={0}>
+                          <Table.TextCell className={styles.headCell} flexBasis={150}>
+                              <Text size={400} color={"#F1F1F1"}>
+                              商品名称
+                              </Text>
+                          </Table.TextCell>
+                          <Table.TextCell className={styles.headCell} flexBasis={300} flexShrink={0} flexGrow={0}>
+
+                              <Text size={400} color={"#F1F1F1"}>
                               地址
+                              </Text>
                           </Table.TextCell>
-                          <Table.TextCell className={styles.headCell} flexBasis={100}>参与次数</Table.TextCell>
-                          <Table.TextCell className={styles.headCell} flexBasis={200}>中奖时间</Table.TextCell>
-                          <Table.TextCell className={styles.headCell} flexBasis={200}>奖品价值</Table.TextCell>
+                          <Table.TextCell className={styles.headCell} flexBasis={80}>
+                              <Text size={400} color={"#F1F1F1"}>
+                                  参与次数
+                              </Text>
+                          </Table.TextCell>
+                          <Table.TextCell className={styles.headCell} flexBasis={200}>
+                              <Text size={400} color={"#F1F1F1"}>
+                              中奖时间
+                              </Text>
+                          </Table.TextCell>
+                          <Table.TextCell className={styles.headCell} flexBasis={200}>
+                              <Text size={400} color={"#F1F1F1"}>
+                              奖品价值
+                              </Text>
+                          </Table.TextCell>
                       </Table.Head>
                       <Table.Body>
                           {ranks.map(rank => {
                               return <Table.Row key={rank.goodId} className={styles.rankTableHead}>
                                   <Table.TextCell className={styles.headCell} flexBasis={50}>
+
+                                      <Text size={300} color={"#F1F1F1"}>
                                       {rank.goodId}
+                                      </Text>
                                   </Table.TextCell>
-                                  <Table.TextCell className={styles.headCell} flexBasis={500}  flexShrink={0} flexGrow={0} onClick={() => openAddress(rank.user)}>
-                                      {rank.user}
+                                  <Table.TextCell className={styles.headCell} flexBasis={150}>
+                                      <Text size={300} color={"#F1F1F1"}>
+                                      {goodNames[rank.goodId]}
+                                      </Text>
+                                  </Table.TextCell>
+                                  <Table.TextCell className={styles.headCell} flexBasis={300}  flexShrink={0} flexGrow={0} onClick={() => openAddress(rank.user)}>
+                                      <Text size={300} color={"#F1F1F1"}>
+                                          {rank.user}
+                                      </Text>
                                       <LinkIcon />
                                   </Table.TextCell>
-                                  <Table.TextCell className={styles.headCell} flexBasis={100}>{rank.count}</Table.TextCell>
+                                  <Table.TextCell className={styles.headCell} flexBasis={80}>
+                                      <Text size={300} color={"#F1F1F1"}>
+                                      {rank.count}
+                                      </Text>
+                                  </Table.TextCell>
                                   <Table.TextCell className={styles.headCell} flexBasis={200} onClick={() => openBlock(rank.blockNum)}
-                                  >{formatTime(rank.blockTime)}</Table.TextCell>
-                                  <Table.TextCell className={styles.headCell} flexBasis={200}>{rank.goodValue} WISH</Table.TextCell>
+                                  >
+                                      <Text size={300} color={"#F1F1F1"}>
+                                      {formatTime(rank.blockTime)}
+                                      </Text>
+                                  </Table.TextCell>
+                                  <Table.TextCell className={styles.headCell} flexBasis={200}>
+                                      <Text size={300} color={"#F1F1F1"}>
+                                      {rank.goodValue}
+                                      WISH
+                                      </Text>
+                                  </Table.TextCell>
                               </Table.Row>
                           })}
                       </Table.Body>

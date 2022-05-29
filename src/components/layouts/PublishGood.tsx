@@ -128,7 +128,6 @@ const PublishGood: React.FC<{}> = () => {
 
     },[goodName, goodId, goodValue, maintenanceFee, goodInfo, fileHash, wallet])
 
-    console.log(wallet.account,  process.env.NEXT_PUBLIC_OWNER_ADDRESS, wallet.account === process.env.NEXT_PUBLIC_OWNER_ADDRESS + '')
     useEffect(() => {
         let ipfs: IPFSHTTPClient | undefined;
         try {
@@ -136,7 +135,6 @@ const PublishGood: React.FC<{}> = () => {
                 url: process.env.NEXT_PUBLIC_IPFS_API,
 
             });
-            console.log(ipfs)
             setIpfs(ipfs)
         } catch (error) {
             console.error("IPFS error ", error);

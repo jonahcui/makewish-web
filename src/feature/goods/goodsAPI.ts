@@ -36,6 +36,8 @@ export interface UserHistory {
     count: number;
     joined: boolean;
     joinTime: number;
+    goodValue: number;
+    paybackFee: number;
     joinBlockNum: number;
     isWinner: boolean;
 }
