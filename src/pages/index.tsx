@@ -35,10 +35,9 @@ const Home: NextPage = () => {
         const result: Record<number, string> = {}
         for (let i = 0; i < ranks.length; i++) {
             const rank = ranks[i];
-            if (rank.fileHash) {
+            if (rank.goodHash) {
                 try {
-                    const json = await readJSONFromIPFS(rank.fileHash);
-                    console.log(json);
+                    const json = await readJSONFromIPFS(rank.goodHash);
                     if (json.goodName) {
                         result[json.goodId] = json.goodName;
                     }
@@ -50,6 +49,11 @@ const Home: NextPage = () => {
         setGoodNames(result);
         return result;
     }
+
+    useEffect(() => {
+        loadGoodNames()
+    }, [ranks]);
+
 
     useEffect(() => {
         loadHistory()
