@@ -47,7 +47,7 @@ export async function pickWinner(index: number, from: string) {
     }
     return instance.methods.pickWinner().send({
         from,
-        gas: 1000000,
+        gas: 10000000,
         gasPrice: 1
     })
 }
