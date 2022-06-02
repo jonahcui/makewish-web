@@ -233,10 +233,10 @@ const Detail: NextPage = () => {
                             {goodInfo?.goodName}
                         </div>
                         <div className={styles.text18} style={{marginBottom: 8}}>ID: {goodInfo?.goodId}</div>
-                        <div className={styles.text18} style={{marginBottom: 8}}>NFT Token: {goodInfo?.nftTokenContractAddress}</div>
-                        <div className={styles.text18} style={{marginBottom: 8}}>Token Id: <a href={goodInfo?.tokenURL} style={{color: "#85A3FF"}}>
+                        {goodInfo?.isNft && <div className={styles.text18} style={{marginBottom: 8}}>NFT Token: {goodInfo?.nftTokenContractAddress}</div>}
+                        {goodInfo?.isNft && <div className={styles.text18} style={{marginBottom: 8}}>Token Id: <a href={goodInfo?.tokenURL} style={{color: "#85A3FF"}}>
                             {goodInfo?.tokenId}
-                        </a> </div>
+                        </a> </div>}
                         <div className={classNames(styles.text18, styles.borderBottom)} style={{marginBottom: 8}}>市场价值: {goodInfo?.goodValue} WISH, 手续费: {goodInfo?.maintenanceFee} WISH</div>
                         <div className={styles.text22} style={{marginBottom: 16}}>
                             <span style={{marginRight: 20}}>
