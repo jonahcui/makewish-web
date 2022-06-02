@@ -5,7 +5,7 @@ import {getUserHistory, UserHistory} from "../feature/goods/goodsAPI";
 import React, {useEffect, useState} from "react";
 import {LinkIcon, Pane, Table, TagIcon, Text} from "evergreen-ui";
 import styles from "../styles/History.module.scss"
-import {formatTime} from "../utils/time";
+import {formatNumber, formatTime} from "../utils/time";
 import {openBlock} from "../utils/explore";
 import {useRouter} from "next/router";
 
@@ -64,7 +64,7 @@ const History: NextPage = () => {
                                 </Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={300}>{formatTime(history.joinTime)}</Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={200}>{history.goodValue}</Table.TextCell>
-                                <Table.TextCell className={styles.dataCell} flexBasis={200}>{history.paybackFee}</Table.TextCell>
+                                <Table.TextCell className={styles.dataCell} flexBasis={200}>{formatNumber(history.paybackFee)}</Table.TextCell>
                                 <Table.TextCell className={styles.dataCell} flexBasis={150} >
                                     {history.isWinner ? <span style={{backgroundColor: "#E49800", paddingLeft: 10, paddingRight: 10, fontWeight: "bold"}}>WIN</span> : ''}
                                 </Table.TextCell>

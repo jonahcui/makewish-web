@@ -12,6 +12,7 @@ export interface WalletState {
     networkName?: string
     chainId?: string
     isOwner: boolean
+    userName?: string
 }
 
 const initialState: WalletState = {
@@ -56,6 +57,12 @@ export const walletSlice = createSlice({
         },
         resetConnectState: (state, action: PayloadAction<any>) => {
             state.account = undefined
+        },
+        setUserName: (state, action: PayloadAction<string>) => {
+            if (state.userName == action.payload) {
+                return;
+            }
+            state.userName = action.payload;
         }
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -63,13 +70,14 @@ export const walletSlice = createSlice({
     extraReducers: (builder) => {
     },
 })
-export const {setAccount, setStatus, setChainId} = walletSlice.actions
+export const {setAccount, setStatus, setChainId, setUserName} = walletSlice.actions
 
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectWallet = (state: AppState) => state.wallet
+export const selectUserName = (state: AppState) => state.wallet.userName
 export const selectIsOwner = (state: AppState) => (state.wallet.account === process.env.NEXT_PUBLIC_OWNER_ADDRESS)
 
 

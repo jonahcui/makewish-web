@@ -51,3 +51,12 @@ export async function pickWinner(index: number, from: string) {
         gasPrice: 1
     })
 }
+
+export async function getUserName(address: string) {
+    const comptrollerContract = await getComptrollerContract();
+    if (!comptrollerContract) {
+        return null
+    }
+
+    return await comptrollerContract.methods.userNames(address).call();
+}

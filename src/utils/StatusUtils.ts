@@ -16,7 +16,7 @@ export function getGoodStatus(goodInfo: GoodInfo) {
     if (!goodInfo) {
          return GoodStatus.NON_GOOD;
     }
-    if (goodInfo.winner !== null && goodInfo.winner.indexOf("0x0000000000000000")  < 0) {
+    if (goodInfo.winner !== null && goodInfo.winner !== undefined && goodInfo.winner.indexOf("0x0000000000000000")  < 0) {
         return GoodStatus.SUCCESS;
     }
     if (new Date().getTime()/ 1000 > parseInt(String(goodInfo.lockedTime)) ) {

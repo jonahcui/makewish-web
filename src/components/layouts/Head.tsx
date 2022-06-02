@@ -54,6 +54,11 @@ const Head: React.FC<Props> = () => {
                         历史参与
                     </EvergreenLink>
                 </Link>
+                <Link href="/nft" passHref>
+                    <EvergreenLink color={parentPath !== 'nft' ? 'neutral' : undefined} marginRight={majorScale(3)}>
+                        我发布的商品
+                    </EvergreenLink>
+                </Link>
                 <UserCenter />
                 <Wallet />
                 <PublishGood />

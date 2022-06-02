@@ -8,10 +8,7 @@ import {formatTime} from "../utils/time";
 import Web3 from "web3";
 import WishApi from "../contracts/WishApi.json";
 import {AbiItem} from "web3-utils";
-import {useAppSelector} from "../app/hooks";
-import {selectWallet} from "../feature/wallet/walletSlice";
 import {openAddress, openBlock} from "../utils/explore";
-import user from "./user";
 import {readJSONFromIPFS} from "../utils/Web3Request";
 
 const Home: NextPage = () => {
@@ -22,8 +19,13 @@ const Home: NextPage = () => {
         const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
         const web3 = new Web3(provider);
         const instance = new web3.eth.Contract(WishApi.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_API as string);
-        const histories =  await instance.methods.getWinnerHistory().call();
-        setRanks(histories.filter((h: any) => h.user.indexOf("0x0000000000000000") < 0));
+        try {
+            const histories =  await instance.methods.getWinnerHistory().call();
+            setRanks(histories.filter((h: any) => h.user.indexOf("0x0000000000000000") < 0));
+            loadGoodNames()
+        } catch (e) {
+            console.error("查询幸运用户失败", e);
+        }
     }
 
     const loadGoodNames = async () => {
@@ -36,6 +38,7 @@ const Home: NextPage = () => {
             if (rank.fileHash) {
                 try {
                     const json = await readJSONFromIPFS(rank.fileHash);
+                    console.log(json);
                     if (json.goodName) {
                         result[json.goodId] = json.goodName;
                     }
@@ -52,9 +55,6 @@ const Home: NextPage = () => {
         loadHistory()
     }, []);
 
-    useEffect(() => {
-        loadGoodNames();
-    }, [ranks]);
 
 
 

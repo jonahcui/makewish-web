@@ -1,12 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Heading, Link as EvergreenLink, majorScale, Pane, Paragraph, SideSheet, Text} from "evergreen-ui";
+import {
+    Button,
+    Card,
+    Heading,
+    Link as EvergreenLink,
+    majorScale,
+    Pane,
+    Paragraph,
+    SideSheet,
+    Tab, Tablist,
+    Text,
+    Table
+} from "evergreen-ui";
 import {ArcElement, Chart as ChartJS, Legend, Tooltip} from 'chart.js';
 import {Pie} from 'react-chartjs-2';
 import BigNumber from "bignumber.js";
-import {useAppSelector} from "../../app/hooks";
-import {selectWallet} from "../../feature/wallet/walletSlice";
-import {getTotalSupply, getUserBalance} from "../../feature/token/tokenAPI";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {selectWallet, setAccount, setUserName} from "../../feature/wallet/walletSlice";
+import {getTotalSupply, getUserBalance, getUserTransferHistories, TransferHistory} from "../../feature/token/tokenAPI";
 import Web3 from "web3";
+import ChangeUserName from "../ChangeUserName";
+import {getUserName} from "../../feature/comptroller/comptrollerAPI";
+import Withdraw from "../Withdraw";
+import {formatNumber} from "../../utils/time";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const decimal = new BigNumber(10).exponentiatedBy(new BigNumber(18));
@@ -29,7 +45,9 @@ export const getData = (ethBalance: number, wishSupply: number) => ({
     ],
 });
 
+
 const UserCenter = () => {
+    const dispatch = useAppDispatch();
     const wallet = useAppSelector(selectWallet);
 
     const [isShown, setIsShown] = useState(false);
@@ -38,6 +56,8 @@ const UserCenter = () => {
     const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
     const [contractEth, setContractEth] = useState(new BigNumber(0));
     const [exchangeRate, setExchangeRate] = useState(new BigNumber(1))
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [transferHistories, setTransferHistories] = useState<Array<TransferHistory>>([]);
 
     const loadBalance = async () => {
        const totalSupply = await getTotalSupply();
@@ -55,25 +75,52 @@ const UserCenter = () => {
 
             const userBalance = await getUserBalance(wallet.account);
             setUserBalance(new BigNumber(userBalance))
+
+            const userTransferHistories = await getUserTransferHistories(wallet.account);
+            setTransferHistories(userTransferHistories);
+
+            const userName = await getUserName(wallet.account);
+
+            dispatch(setUserName(userName));
         }
 
     }
 
     useEffect(() => {
-        loadBalance()
+        let interval = setInterval(loadBalance, 5000)
+        return () => {
+            clearInterval(interval)
+        }
     }, [wallet])
 
     return <React.Fragment>
         <SideSheet isShown={isShown} onCloseComplete={() => setIsShown(false)}>
             <Pane zIndex={1} flexShrink={0} elevation={0} backgroundColor="white">
                 <Pane padding={16} borderBottom="muted">
-                    <Heading size={600}>用户中心</Heading>
+                    <Heading size={600}>用户 - {wallet.userName} -
+                        <Pane style={{float: "right"}}>
+                            <ChangeUserName />
+                        </Pane>
+                    </Heading>
                     <Paragraph size={400} color="muted">
                         用户资产和平台运营情况
                     </Paragraph>
                 </Pane>
+                <Pane display="flex" padding={8}>
+                    <Tablist>
+                        {['概览', '交易记录'].map((tab, index) => (
+                            <Tab
+                                key={tab}
+                                isSelected={selectedIndex === index}
+                                onSelect={() => setSelectedIndex(index)}
+                            >
+                                {tab}
+                            </Tab>
+                        ))}
+                    </Tablist>
+                </Pane>
             </Pane>
-            <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
+            {selectedIndex == 0 && <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
                 <Card
                     backgroundColor="white"
                     elevation={0}
@@ -86,13 +133,12 @@ const UserCenter = () => {
                             <Text>
                                 用户余额: {userBalance.div(decimal).toPrecision()} WISH
                             </Text>
-                            <Button>兑换WISH</Button>
+                            <Withdraw />
                     </Pane>
                     <Pane flex={1} display={"flex"} flexDirection={"row"} justifyContent={"space-between"} alignItems={"center"}>
                         <Text>
                             用户ETH: {userEth.div(decimal).toPrecision()} ETH
                         </Text>
-                        <Button>免费领取ETH</Button>
                     </Pane>
                 </Card>
                 <Card
@@ -123,7 +169,27 @@ const UserCenter = () => {
                     </Pane>
 
                 </Card>
-            </Pane>
+            </Pane>}
+            {selectedIndex == 1 && <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
+                <Table>
+                    <Table.Head>
+                        <Table.TextHeaderCell>Type</Table.TextHeaderCell>
+                        <Table.TextHeaderCell>From</Table.TextHeaderCell>
+                        <Table.TextHeaderCell>To</Table.TextHeaderCell>
+                        <Table.TextHeaderCell>Amount</Table.TextHeaderCell>
+                    </Table.Head>
+                    <Table.Body height={240}>
+                        {transferHistories.map((profile) => (
+                            <Table.Row key={profile.from + profile.to + profile.blockNum}>
+                                <Table.TextCell>{profile.transferType}</Table.TextCell>
+                                <Table.TextCell>{profile.from}</Table.TextCell>
+                                <Table.TextCell>{profile.to}</Table.TextCell>
+                                <Table.TextCell isNumber>{formatNumber(profile.amount)}</Table.TextCell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table>
+            </Pane>}
         </SideSheet>
         <EvergreenLink color={'neutral'} marginRight={majorScale(3)} onClick={() => setIsShown(true)}>
             个人中心

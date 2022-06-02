@@ -9,27 +9,10 @@ import {getGoodStatus, GoodStatus} from "../../utils/StatusUtils";
 import {formatTime} from "../../utils/time";
 
 interface Props {
-    web3: Web3
-    index: number
-    contract: any
+    good: GoodInfo
 }
 
-const GoodCard = ({web3, index} : Props) => {
-    const [goodInfo, setGoodInfo] = useState<GoodInfo>();
-    const [loadding, setLoadding] = useState<boolean>(false);
-
-    const loadGoodInfo = async () => {
-        setLoadding(true)
-        const good = await getGoodInfo(index);
-        if (good != null) {
-            setGoodInfo(good)
-        }
-        setLoadding(false)
-    }
-
-    useEffect(() => {
-        loadGoodInfo()
-    }, [web3]);
+const GoodCard = ({good: goodInfo} : Props) => {
 
     const _getTag = () => {
         if (!goodInfo) {
@@ -51,10 +34,8 @@ const GoodCard = ({web3, index} : Props) => {
     if (!goodInfo) {
         return <div />
     }
-    if (loadding) {
-        return <Spinner className={styles.card}/>
-    }
     return <Card className={styles.card} style={{marginRight: majorScale(2), marginTop: majorScale(2)}}>
+        { goodInfo?.isNft && <Badge color="purple" style={{float: 'left'}}>NFT</Badge>}
         {_getTag()}
         <Pane is={"img"} src={openIPFSImage(goodInfo?.fileHash)} width={255} height={255} />
         <div className={styles.goodName}>{goodInfo?.goodId} -- {goodInfo?.goodName}</div>
@@ -77,7 +58,7 @@ const GoodCard = ({web3, index} : Props) => {
                 </div>
                 <div className={styles.goodInfo}>
                     <Text size={300} color={"#F1F1F1"}>
-                    开始时间: {formatTime(parseInt(goodInfo?.publishTime) + 60)}
+                    开始时间: {formatTime(parseInt(goodInfo?.publishTime + '') + 60)}
                     </Text>
                 </div>
                 <div className={styles.goodInfo}>
@@ -86,7 +67,7 @@ const GoodCard = ({web3, index} : Props) => {
                     </Text>
                 </div>
             </Pane>
-            <Link href={`/goods/${index}`} passHref>
+            <Link href={`/goods/${goodInfo.goodIndex}`} passHref>
                 <Button appearance={"primary"} >
                     GO
                 </Button>

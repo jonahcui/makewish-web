@@ -52,10 +52,10 @@ export async function readJSONFromIPFS(path: string)  {
     if (!ipfs) {
         return null
     }
-    const i = (await getIPFS() as IPFSHTTPClient).cat(path, {offset: 0})
+    const r = await ipfs.resolve(path);
     let result = "";
     const decoder = new TextDecoder();
-    for await (const x of ipfs.get(path)) {
+    for await (const x of ipfs.get(path, {timeout: 1000})) {
         result += decoder.decode(x);
     }
     const index = result.indexOf("{");
@@ -95,12 +95,19 @@ export async function getApiContract() {
     if (!store.getState().wallet) {
         return null;
     }
-    const provider = new Web3.providers.HttpProvider(process.env.NEXT_PUBLIC_ETH_RPC_URL as string);
     const web3 = getReadableWeb3();
     if (!web3) {
         return null;
     }
     return new web3.eth.Contract(WishApi.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_API);
+}
+
+export async function getReadableTokenContract() {
+    if (!store.getState().wallet) {
+        return null;
+    }
+    const web3 = getReadableWeb3();
+    return new web3.eth.Contract(WishToken.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_TOKEN);
 }
 
 export async function getTokenContract() {

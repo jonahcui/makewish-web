@@ -1,22 +1,29 @@
 import type {NextPage} from 'next'
 import styles from '../../styles/goods/GoodsDetail.module.scss'
-import {Badge, Button, LinkIcon, Pane, Table, TextInput, toaster, Text} from "evergreen-ui";
+import {Badge, Button, LinkIcon, Pane, Table, TextInput, toaster, Text, majorScale} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
 import LogoDivider from "../../components/LogoDivider";
 import classNames from "classnames";
-import {getGoodInfo, getUserRecord, getUserTickets, GoodInfo, UserGoodRecord} from "../../feature/goods/goodsAPI";
+import {
+    getGoodInfo,
+    getUserRecords,
+    getUserTickets,
+    GoodInfo,
+    UserGoodRecord
+} from "../../feature/goods/goodsAPI";
 import {useRouter} from "next/router";
 import {useAppSelector} from "../../app/hooks";
 import {selectIsOwner, selectWallet} from "../../feature/wallet/walletSlice";
 import {getUserBalance} from "../../feature/token/tokenAPI";
 import BigNumber from "bignumber.js";
 import {getGoodStatus, GoodStatus} from "../../utils/StatusUtils";
-import {formatTime} from "../../utils/time";
+import {formatNumber, formatTime} from "../../utils/time";
 import {exchangeAndPurchase, pickWinner} from "../../feature/comptroller/comptrollerAPI";
 import Countdown from "react-countdown";
 import _ from 'lodash';
 import {openAddress, openBlock} from "../../utils/explore";
 import {openIPFSImage} from "../../utils/Web3Request";
+import {right} from "glamor";
 
 // @ts-ignore
 const UserRow =({record, winner}) => {
@@ -24,7 +31,7 @@ const UserRow =({record, winner}) => {
         return <React.Fragment />;
     }
     return <Table.Row className={styles.rankTableHead} style={{backgroundColor: "black"}}>
-        <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.user.substring(2, 8)}</Table.TextCell>
+        <Table.TextCell className={styles.dataCell} flexBasis={100}>{record.userName && record.userName !== '' ? record.userName : record?.user.substring(2, 8)}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={100}>{record?.count}</Table.TextCell>
         <Table.TextCell className={styles.dataCell} flexBasis={500} style={{cursor: "pointer"}} onClick={() => openAddress(record?.user)}>
             <Text size={400} color={"#F1F1F1"}>
@@ -57,9 +64,10 @@ const GoodStatusTag = ({goodStatus, goodInfo, isOwner, onPickWinner} : {goodStat
         return <div>
             <div className={classNames(styles.stateText)}>等待开奖结果</div>
             <div className={classNames(styles.stateText)}>
-                <Countdown date={parseInt(goodInfo?.lockedTime as string)  * 1000 + 10 * 60 * 1000} className={styles.stateText} />
+                <Countdown date={parseInt(goodInfo?.lockedTime as string)  * 1000 + 5 * 60 * 1000} className={styles.stateText} />
             </div>
-            {isOwner && <Button intent="danger" style={{width: "100%"}} onClick={(e:any) => onPickWinner()}>开奖</Button>}
+            {<Button intent="danger" style={{width: "100%"}} onClick={(e:any) => onPickWinner()}>开奖</Button>}
+            {<Text color="#FFFFFF" marginTop={majorScale(1)}>开奖可以获得手续费奖励</Text>}
         </div>
     }
 
@@ -110,11 +118,6 @@ const Detail: NextPage = () => {
 
     const [goodInfo, setGoodInfo] = useState<GoodInfo>();
     const [loadding, setLoadding] = useState<boolean>(false);
-    const [page, setPage] = useState({
-        pageSize: 20,
-        current: 1,
-        totalPages: 0,
-    });
 
     const [count, setCount] = useState('1');
     const [goodStatus, setGoodStatus] = useState<GoodStatus>(GoodStatus.NON_GOOD);
@@ -129,17 +132,12 @@ const Detail: NextPage = () => {
             return;
         }
         const good = await getGoodInfo(parseInt(id as string));
+        console.log("1111", good)
         setLoadding(false)
         if (good != null) {
             setGoodInfo(good)
             setGoodStatus(getGoodStatus(good));
         }
-
-        setPage({
-            pageSize: 20,
-            current: 1,
-            totalPages: good.joinedUsers % 20 > 0 ? good.joinedUsers / 20 + 1 : good.joinedUsers
-        })
 
         await _loadUsers(good, {
             pageSize: 20,
@@ -155,18 +153,7 @@ const Detail: NextPage = () => {
         if (!totalRecords || totalRecords == 0) {
             return;
         }
-        const offset = getOffset(page.current, page.pageSize, totalRecords as number);
-        const result = []
-        for (let i = 0; i < page.pageSize; i++) {
-            const index = offset - i;
-            console.log("index: ",index)
-            if (index < 0) {
-                break;
-            }
-            // @ts-ignore
-            const userRecord = await getUserRecord(id, index);
-            result.push(userRecord);
-        }
+        const result = await getUserRecords(id as string);
         setUserRecords(result)
     }
 
@@ -220,15 +207,12 @@ const Detail: NextPage = () => {
             loadGoodInfo()
         } catch (e) {
             console.error("购买失败：", e)
-            toaster.danger("购买失败: " + e.message);
+            toaster.danger("购买失败");
         }
 
     }
 
     const onPickWinner = async () => {
-        if (!isOwner) {
-            return;
-        }
         console.log("开奖：", [goodInfo?.goodId])
         const resp = await pickWinner(parseInt(id as string), wallet.account as string);
         console.log("开奖：", resp?.txHash)
@@ -240,13 +224,20 @@ const Detail: NextPage = () => {
             <Pane display={"flex"} alignItems="center" flexDirection="column">
                 <Pane display={"flex"} justifyContent={"center"} marginTop={50}>
                     <Pane style={{marginRight: 20}}>
-                        {goodInfo && goodInfo.fileHash && <Pane is="img" style={{width: 282, height: 282}} src={openIPFSImage(goodInfo.fileHash)} /> }
+                        {goodInfo && <Pane is="img" style={{width: 282, height: 282}} src={openIPFSImage(goodInfo.fileHash)} /> }
                         <GoodStatusTag goodStatus={goodStatus} goodInfo={goodInfo} isOwner={isOwner} onPickWinner={onPickWinner} />
                     </Pane>
                     <Pane marginBottom={50} width={500}>
-                        <div className={styles.text26} style={{marginBottom: 8}}>{goodInfo?.goodName}</div>
+                        <div className={styles.text26} style={{marginBottom: 8}}>
+                            {goodInfo?.isNft && <Badge color="purple">NFT</Badge>}
+                            {goodInfo?.goodName}
+                        </div>
                         <div className={styles.text18} style={{marginBottom: 8}}>ID: {goodInfo?.goodId}</div>
-                        <div className={classNames(styles.text18, styles.borderBottom)} style={{marginBottom: 8}}>市场价值: {goodInfo?.goodValue} WISH</div>
+                        <div className={styles.text18} style={{marginBottom: 8}}>NFT Token: {goodInfo?.nftTokenContractAddress}</div>
+                        <div className={styles.text18} style={{marginBottom: 8}}>Token Id: <a href={goodInfo?.tokenURL} style={{color: "#85A3FF"}}>
+                            {goodInfo?.tokenId}
+                        </a> </div>
+                        <div className={classNames(styles.text18, styles.borderBottom)} style={{marginBottom: 8}}>市场价值: {goodInfo?.goodValue} WISH, 手续费: {goodInfo?.maintenanceFee} WISH</div>
                         <div className={styles.text22} style={{marginBottom: 16}}>
                             <span style={{marginRight: 20}}>
                             份额单价: 1 WISH
@@ -267,7 +258,7 @@ const Detail: NextPage = () => {
                                 手续费: {goodInfo?.maintenanceFee}
                             </div>
                             <div className={styles.text16} style={{marginBottom: 4}}>
-                                返还金额（每票）: {goodInfo?.paybackFee}
+                                返还金额（每票）: {formatNumber(goodInfo?.paybackFee)}
                             </div>
                             <div className={styles.text16} style={{marginBottom: 4}} onClick={() => openBlock(goodInfo?.winnerBlock)}>
                                 开奖时间(开奖block): {formatTime(goodInfo?.winnerTime)}  ({goodInfo?.winnerBlock})  <LinkIcon style={{paddingTop: 4.5}} />
