@@ -45,6 +45,26 @@ export const getData = (ethBalance: number, wishSupply: number) => ({
     ],
 });
 
+function formatTransferType(transferType: number) {
+    if (transferType + '' === '4') {
+        return "参加抽奖"
+    }
+
+    if (transferType + '' === '3') {
+        return "奖金/返还"
+    }
+
+    if (transferType + '' === '1') {
+        return "兑换"
+    }
+
+    if (transferType + '' === '2') {
+        return "提现"
+    }
+
+    return "转账"
+}
+
 
 const UserCenter = () => {
     const dispatch = useAppDispatch();
@@ -181,7 +201,7 @@ const UserCenter = () => {
                     <Table.Body height={240}>
                         {transferHistories.map((profile) => (
                             <Table.Row key={profile.from + profile.to + profile.blockNum}>
-                                <Table.TextCell>{profile.transferType}</Table.TextCell>
+                                <Table.TextCell>{formatTransferType(profile.transferType)}</Table.TextCell>
                                 <Table.TextCell>{profile.from}</Table.TextCell>
                                 <Table.TextCell>{profile.to}</Table.TextCell>
                                 <Table.TextCell isNumber>{formatNumber(profile.amount)}</Table.TextCell>
