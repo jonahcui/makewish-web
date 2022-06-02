@@ -18,7 +18,8 @@ const Withdraw = () => {
         const mainContract = new web3.eth.Contract(Comptroller.abi as AbiItem[], process.env.NEXT_PUBLIC_CONTRACT_MAIN)
         try {
             const decimal = new BigNumber(10).exponentiatedBy(18);
-            const v  = new BigNumber(value).times(decimal).toString();
+            const v  = new BigNumber(value).times(decimal).toPrecision();
+            console.log(v);
             const result = await mainContract.methods.withdraw(v)
                 .send({from: wallet.account, gas: 4712388, gasPrice: '1',});
             toaster.success("提现成功");
@@ -26,7 +27,7 @@ const Withdraw = () => {
             toaster.danger("提现失败");
         }
         setIsShown(false);
-    }, [wallet])
+    }, [wallet, value])
 
     const _changeValue = (e: any) => {
         const v: string = e.target.value;
