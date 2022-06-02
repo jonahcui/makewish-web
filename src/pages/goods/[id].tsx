@@ -64,7 +64,7 @@ const GoodStatusTag = ({goodStatus, goodInfo, isOwner, onPickWinner} : {goodStat
         return <div>
             <div className={classNames(styles.stateText)}>等待开奖结果</div>
             <div className={classNames(styles.stateText)}>
-                <Countdown date={parseInt(goodInfo?.lockedTime as string)  * 1000 + 5 * 60 * 1000} className={styles.stateText} />
+                <Countdown date={parseInt(goodInfo?.lockedTime as string)  * 1000 + 30 * 1000} className={styles.stateText} />
             </div>
             {<Button intent="danger" style={{width: "100%"}} onClick={(e:any) => onPickWinner()}>开奖</Button>}
             {<Text color="#FFFFFF" marginTop={majorScale(1)}>开奖可以获得手续费奖励</Text>}
