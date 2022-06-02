@@ -164,7 +164,6 @@ const Detail: NextPage = () => {
         // @ts-ignore
         const userHistories = await getUserTickets(id, wallet.account);
         const userBalance = await getUserBalance(wallet.account);
-        console.log(userBalance)
         setUserTickets(userHistories);
         setUserBalance(new BigNumber(userBalance).div(new BigNumber(10).exponentiatedBy(18)));
     }
@@ -319,7 +318,7 @@ const Detail: NextPage = () => {
                         </Table.Head>
                         <Table.Body style={{backgroundColor: "black"}}>
                             {/*{goodInfo && renderTableRows()}*/}
-                            {userRecords.map(userRecord => <UserRow key={userRecord.user} record={userRecord} winner={goodInfo?.winner} />)}
+                            {userRecords.map(userRecord => <UserRow key={userRecord.user + userRecord.joinBlockNum} record={userRecord} winner={goodInfo?.winner} />)}
                         </Table.Body>
                     </Table.Body>
                 </Pane>
